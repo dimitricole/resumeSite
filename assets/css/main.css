@@ -2,37 +2,6 @@
 
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i");
 
-.accordion {
-  background-color: #eee;
-  color: #444;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  text-align: left;
-  border: none;
-  outline: none;
-  transition: 0.4s;
-}
-
-.accordion:hover {
-  background-color: #ccc;
-}
-
-.panel {
-  padding: 0 18px;
-  background-color: white;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.2s ease-out;
-}
-
-.accordion:after {
-  content: '\02795';
-  /* Unicode character for "plus" sign (+) */
-  float: right;
-  margin-left: 5px;
-}
-
 html,body,div,span,h1,h2,h3,h4,h5,h6,p,a,img,s,strong,center,ul,li,form,label,caption,article,footer,section {
   margin: 0;
   padding: 0;
@@ -4545,4 +4514,35 @@ body.is-preload .items.onload-fade-in > * > .inner {
 
 #wrapper.divided > *:first-child {
   box-shadow: none !important;
+}
+
+.accordion {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  outline: none;
+  transition: 0.4s;
+}
+
+.accordion:hover {
+  background-color: #ccc;
+}
+
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+
+.accordion:after {
+  content: '\02795';
+  /* Unicode character for "plus" sign (+) */
+  float: right;
+  margin-left: 5px;
 }
