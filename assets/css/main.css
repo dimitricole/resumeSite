@@ -1,13 +1,6 @@
 @import url(fontawesome-all.min.css);
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i");
 
-/*
-	Story by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
-
-/* Style the buttons that are used to open and close the accordion panel */
 .accordion {
 	background-color: #eee;
 	color: #444;
@@ -20,13 +13,11 @@
 	transition: 0.4s;
   }
   
-  /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-  .active, .accordion:hover {
+.active, .accordion:hover {
 	background-color: #ccc;
   }
   
-  /* Style the accordion panel. Note: hidden by default */
-  .panel {
+.panel {
 	padding: 0 18px;
 	background-color: white;
 	max-height: 0;
@@ -34,13 +25,13 @@
 	transition: max-height 0.2s ease-out;
   }
 
-  .accordion:after {
+.accordion:after {
 	content: '\02795'; /* Unicode character for "plus" sign (+) */
 	float: right;
 	margin-left: 5px;
   }
   
-  .active:after {
+.active:after {
 	content: "\2796"; /* Unicode character for "minus" sign (-) */
   }
 
