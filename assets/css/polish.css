@@ -85,14 +85,6 @@
 	box-shadow: inset 0 0 0 2px #1d57e6;
 }
 
-/* --- Subtle lift on spotlight imagery ------------------------------------- */
-.spotlight .image img {
-	transition: transform 0.5s ease;
-}
-.spotlight:hover .image img {
-	transform: scale(1.02);
-}
-
 /* --- Talks & Writing ------------------------------------------------------ */
 .tw-grid {
 	display: flex;
