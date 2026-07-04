@@ -1,6 +1,3 @@
-const observer = lozad();
-observer.observe();
-
 var acc = document.getElementsByClassName("accordion");
 var i;
 
@@ -321,7 +318,7 @@ for (i = 0; i < acc.length; i++) {
 			}, 125);
 
 		})
-		.on('keypress', '.modal', function (event) {
+		.on('keydown', '.modal', function (event) {
 
 			var $modal = $(this);
 
