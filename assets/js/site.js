@@ -97,43 +97,68 @@
 		});
 	}
 
-	/* ---------- Altitude: interpolated between camp centers ---------- */
+	/* ---------- Timeline: the year under your feet ---------- */
 
-	var MIN = 1200, MAX = 4000;
-	var LANDING = 76; // where a camp box lands: just under the top bar
+	var NOW = 2026, FIRST = 2010;
+	var LANDING = 76; // where a box lands: just under the top bar
 	var autoScrolling = false, autoTimer;
+	var desktop = window.matchMedia('(min-width: 1100px)');
+	var rail = document.getElementById('alt');
+	var needle = document.getElementById('alt-needle');
+	var yrNum = document.getElementById('yr-num'), yrRail = document.getElementById('yr-rail');
+	var yrRead = document.getElementById('yr-read');
+	var railLinks = Array.prototype.slice.call(document.querySelectorAll('.alt-camps a'));
+	var trailhead = document.getElementById('trailhead');
 	var mark = document.getElementById('mark');
 	var heroName = document.querySelector('.hero h1');
-	var legs = Array.prototype.slice.call(document.querySelectorAll('[data-alt]'));
-	var trailhead = document.getElementById('trailhead');
-	var rail = document.getElementById('alt');
-	var num = document.getElementById('alt-num'), needle = document.getElementById('alt-needle');
-	var railLinks = Array.prototype.slice.call(document.querySelectorAll('.alt-camps a'));
+	function eraBox(id) { return document.querySelector('#' + id + ' .panel'); }
+	var sub = document.getElementById('quinnipiac');
 
-	// A camp is reached when its top crosses a line just under the top bar,
-	// so jumping to a camp reads exactly that camp's altitude.
-	function boxOf(leg) { return leg.querySelector('.panel') || leg; }
-	function altitude() {
-		var line = LANDING + 4;
-		for (var i = legs.length - 1; i >= 0; i--) {
-			var top = boxOf(legs[i]).getBoundingClientRect().top;
-			if (top <= line) {
-				if (i === legs.length - 1) return +legs[i].dataset.alt;
-				var nextTop = boxOf(legs[i + 1]).getBoundingClientRect().top;
-				var t = Math.min(1, (line - top) / (nextTop - top));
-				return +legs[i].dataset.alt + (+legs[i + 1].dataset.alt - +legs[i].dataset.alt) * t;
+	// Anchors in page order: where each era's box starts and ends, the year there,
+	// and the needle's place on the rail. Everything between is interpolated.
+	function anchors() {
+		var s = eraBox('summit').getBoundingClientRect(), r = eraBox('camp3').getBoundingClientRect();
+		var a = eraBox('camp2').getBoundingClientRect(), t = eraBox('base').getBoundingClientRect();
+		var q = sub.getBoundingClientRect();
+		return [
+			{ y: s.top, year: NOW, rail: 0, sky: 0 },
+			{ y: r.top, year: NOW, rail: 0.25, sky: 0.12 },
+			{ y: r.bottom, year: 2025, rail: 0.5, sky: 0.3 },
+			{ y: a.top, year: 2025, rail: 0.5, sky: 0.3 },
+			{ y: a.bottom, year: 2020, rail: 0.75, sky: 0.55 },
+			{ y: t.top, year: 2020, rail: 0.75, sky: 0.55 },
+			{ y: q.top - 1, year: 2016, rail: 1, sky: 0.8 },
+			{ y: q.top, year: 2015, rail: 1, sky: 0.8 },
+			{ y: t.bottom, year: FIRST, rail: 1, sky: 1 }
+		];
+	}
+
+	function position() {
+		var line = LANDING + 4, A = anchors();
+		if (line < A[0].y) return A[0];
+		for (var i = A.length - 2; i >= 0; i--) {
+			if (A[i].y <= line) {
+				var n = A[i + 1], span = n.y - A[i].y;
+				var k = span > 0 ? Math.min(1, (line - A[i].y) / span) : 1;
+				return {
+					year: A[i].year + (n.year - A[i].year) * k,
+					rail: A[i].rail + (n.rail - A[i].rail) * k,
+					sky: A[i].sky + (n.sky - A[i].sky) * k
+				};
 			}
 		}
-		return MIN;
+		return A[A.length - 1];
 	}
 
 	function update() {
-		var alt = altitude(), p = (MAX - alt) / (MAX - MIN); // 0 at the summit, 1 at the trailhead
-		if (!reduce) paint(p);
-		num.textContent = (Math.round(alt / 10) * 10).toLocaleString('en-US');
-		needle.style.top = (p * 100) + '%';
-		// Back at the trailhead the rail has done its job
-		rail.classList.toggle('is-away', trailhead.getBoundingClientRect().top < window.innerHeight * 0.3);
+		var pos = position();
+		if (!reduce) paint(pos.sky);
+		var yr = String(Math.round(pos.year));
+		yrNum.textContent = yrRail.textContent = yr;
+		needle.style.top = (pos.rail * 100) + '%';
+		var down = trailhead.getBoundingClientRect().top < window.innerHeight * 0.3;
+		rail.classList.toggle('is-away', down);
+		yrRead.classList.toggle('is-away', down);
 		// The home pill appears once the big name has scrolled out of view
 		var shown = heroName.getBoundingClientRect().bottom < 40;
 		mark.classList.toggle('is-shown', shown);
@@ -147,10 +172,10 @@
 				if (a.getAttribute('href') === '#' + e.target.id) a.setAttribute('aria-current', 'true');
 				else a.removeAttribute('aria-current');
 			});
-			if (reduce) paint((MAX - e.target.dataset.alt) / (MAX - MIN));
+			if (reduce) paint(position().sky);
 		});
 	}, { rootMargin: '-45% 0px -50% 0px' });
-	legs.forEach(function (l) { campObserver.observe(l); });
+	['summit', 'camp3', 'camp2', 'base', 'quinnipiac'].forEach(function (id) { campObserver.observe(document.getElementById(id)); });
 
 	var ticking = false;
 	window.addEventListener('scroll', function () {
@@ -159,7 +184,7 @@
 		requestAnimationFrame(function () { ticking = false; update(); });
 	}, { passive: true });
 	window.addEventListener('resize', update);
-	paint((MAX - altitude()) / (MAX - MIN));
+	paint(position().sky);
 	update();
 
 	/* ---------- Agent console ---------- */
@@ -269,7 +294,190 @@
 		if (!started) run('research');
 	}, { threshold: 0.35 }).observe(log);
 
-	/* ---------- The guide: written answers, matched by keyword ---------- */
+	/* ---------- The guide: one bubble, always there ---------- */
+
+	var dock = document.getElementById('dock');
+	var bubble = document.getElementById('bubble');
+	var gStep = document.getElementById('g-step'), gText = document.getElementById('g-text'), gActions = document.getElementById('g-actions');
+	var gShort = document.getElementById('g-short');
+	var modeGuide = document.getElementById('mode-guide'), modeAsk = document.getElementById('mode-ask');
+	var paneGuide = document.getElementById('pane-guide'), paneAsk = document.getElementById('pane-ask');
+	var collapseBtn = document.getElementById('collapse'), guideBtn = document.getElementById('guide-btn');
+	var tipBtn = document.getElementById('tip-btn');
+	var askLog = document.getElementById('ask-log'), askChips = document.getElementById('ask-chips');
+	var askForm = document.getElementById('ask-form'), askInput = document.getElementById('ask-input');
+	var mode = 'guide', collapsed = false, step = -1;
+
+	var TOUR = [
+		{ at: '#top', short: 'Welcome, traveler. Shall we descend together?', text: "Welcome, traveler. You stand at the summit of Dimitri's trail, where the work is AI, blockchain, and agentic finance. The path runs down through every camp from here. Shall we descend together?" },
+		{ at: '#summit', short: 'The summit: what Dimitri works on now.', text: 'The summit is what Dimitri works on now. Just below waits a small sketch: an agent reads a ledger, then asks before it moves any money.' },
+		{ at: '#camp3', short: 'Camp 3: Ripple, from Aug 2025 to now.', text: "Camp 3 is Ripple, since Aug 2025. Dimitri leads the North America Customer Solutions team as a player-coach, and builds a lot: an AI RFP workflow on Claude, the team's demo tools with Claude Code, and internal MCP servers for XRPL." },
+		{ at: '#camp2', short: 'Camp 2: five years at AWS, and an early start in generative AI.', text: 'Camp 2 is five years at AWS, where Dimitri got into generative AI early, including the AWS architecture for an AI layer in a healthcare platform.' },
+		{ at: '#base', short: 'Camp 1: Travelers, 2016 to 2020, with Quinnipiac below.', text: 'Camp 1 is Travelers, 2016 to 2020, where Dimitri led seven developers plus an Accenture delivery team. Quinnipiac, 2010 to 2015, waits just below.' },
+		{ at: '#talks', short: 'The trailhead: talks and writing.', text: 'Back at the trailhead: talks and writing, including three XRPL Apex talks and an AWS post on generative AI workflows.' },
+		{ at: '#skills', short: 'The skills Dimitri gathered along the way.', text: 'The skills Dimitri gathered along the way, from Claude and MCP to XRPL, Python, and AWS.' },
+		{ at: '#mountains', short: 'Where Dimitri goes when off the clock.', text: 'And this is where Dimitri spends time off the clock.' },
+		{ at: '#contact', short: 'End of the trail. Email or LinkedIn is fastest.', text: "That's the whole trail. To talk with Dimitri, email or LinkedIn is fastest. I'll be here if you have questions." }
+	];
+
+	function button(parent, label, cls, fn) {
+		var b = el('button', cls, label);
+		b.type = 'button';
+		b.addEventListener('click', fn);
+		parent.appendChild(b);
+		return b;
+	}
+
+	var waveTimer;
+	function wave() {
+		dock.classList.remove('is-waving');
+		void dock.offsetWidth;
+		dock.classList.add('is-waving');
+		clearTimeout(waveTimer);
+		waveTimer = setTimeout(function () { dock.classList.remove('is-waving'); }, 2000);
+	}
+
+	// On desktop the rail fills whatever height the bubble leaves above it.
+	// The rail keeps one steady height, sized to leave room for the guide and a
+	// typical narration bubble; if the bubble grows past that (a long Ask thread),
+	// the rail steps aside instead of shrinking.
+	var BUBBLE_ROOM = 312, GUIDE_ROOM = 190, RAIL_TOP = 150;
+	function fitRail() {
+		if (!desktop.matches) { rail.style.removeProperty('--rail-h'); rail.classList.remove('is-cramped'); return; }
+		var h = Math.min(420, window.innerHeight - RAIL_TOP - GUIDE_ROOM - BUBBLE_ROOM);
+		rail.style.setProperty('--rail-h', Math.max(0, h) + 'px');
+		// Layout position, unaffected by the dock's entrance transform
+		var bubbleTop = dock.offsetTop + bubble.offsetTop;
+		rail.classList.toggle('is-cramped', h < 150 || bubbleTop < RAIL_TOP + h + 16);
+	}
+
+	function setCollapsed(c) {
+		collapsed = c;
+		dock.classList.toggle('is-collapsed', c);
+		collapseBtn.setAttribute('aria-expanded', c ? 'false' : 'true');
+		collapseBtn.setAttribute('aria-label', c ? 'Expand the guide' : 'Collapse the guide');
+		guideBtn.setAttribute('aria-label', c ? 'Expand the guide' : 'Collapse the guide');
+		guideBtn.setAttribute('aria-expanded', c ? 'false' : 'true');
+		fitRail();
+	}
+
+	function setMode(m, focus) {
+		mode = m;
+		bubble.dataset.mode = m;
+		var ask = m === 'ask';
+		modeGuide.setAttribute('aria-selected', ask ? 'false' : 'true');
+		modeAsk.setAttribute('aria-selected', ask ? 'true' : 'false');
+		modeGuide.tabIndex = ask ? -1 : 0;
+		modeAsk.tabIndex = ask ? 0 : -1;
+		paneGuide.hidden = ask;
+		paneAsk.hidden = !ask;
+		if (ask && !askLog.childElementCount) {
+			askLog.appendChild(el('div', 'msg msg-agent', 'Here are a few things I can tell you about Dimitri. Pick one, or type a question.'));
+		}
+		if (!ask) tipBtn.setAttribute('aria-expanded', 'false');
+		if (collapsed && ask) setCollapsed(false);
+		fitRail();
+		if (focus) (ask ? (desktop.matches ? askInput : modeAsk) : modeGuide).focus({ preventScroll: true });
+	}
+
+	function narrate(i) {
+		step = i;
+		var s = TOUR[i];
+		gStep.textContent = i === 0 ? 'Your guide' : 'Stop ' + i + ' of ' + (TOUR.length - 1);
+		gText.textContent = s.text;
+		gShort.textContent = s.short;
+		gActions.innerHTML = '';
+		if (i === 0) {
+			button(gActions, 'Begin the descent', 'primary', function () { go(1); });
+			button(gActions, 'Ask a question', '', function () { setMode('ask', true); });
+		} else if (i < TOUR.length - 1) {
+			button(gActions, 'Back', '', function () { go(i - 1); });
+			button(gActions, 'Next', 'primary', function () { go(i + 1); });
+		} else {
+			button(gActions, 'Ask a question', '', function () { setMode('ask', true); });
+			button(gActions, 'Back to the top', 'primary', function () { go(0); });
+		}
+		fitRail();
+	}
+
+	function go(i) {
+		narrate(i);
+		travel(TOUR[i].at, true);
+		wave();
+		var next = gActions.querySelector('.primary');
+		if (next && dock.contains(document.activeElement)) next.focus({ preventScroll: true });
+	}
+
+	// The guide narrates wherever the visitor is, however they got there.
+	function stopInView() {
+		var line = window.innerHeight * 0.45;
+		for (var i = TOUR.length - 1; i > 0; i--) {
+			var t = document.querySelector(TOUR[i].at);
+			var b = t.querySelector('.panel, .day-inner') || t;
+			if (b.getBoundingClientRect().top <= line) return i;
+		}
+		return 0;
+	}
+	var following = false;
+	window.addEventListener('scroll', function () {
+		if (autoScrolling || following) return;
+		following = true;
+		requestAnimationFrame(function () {
+			following = false;
+			var i = stopInView();
+			if (i !== step) narrate(i);
+		});
+	}, { passive: true });
+
+	// Scroll so the target's box sits just under the top bar, whole and readable.
+	function land(target) {
+		autoScrolling = true;
+		clearTimeout(autoTimer);
+		autoTimer = setTimeout(function () {
+			autoScrolling = false;
+			var i = stopInView();
+			if (i !== step) narrate(i);
+		}, 1400);
+		if (target.id === 'top') { window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); return target; }
+		var b = target.matches('.panel, .day-inner, .agents, .sub') ? target : target.querySelector('.panel, .day-inner') || target;
+		window.scrollTo({ top: Math.max(0, b.getBoundingClientRect().top + window.scrollY - LANDING), behavior: reduce ? 'auto' : 'smooth' });
+		return b;
+	}
+
+	function travel(href, fromGuide) {
+		if (href.indexOf('mailto:') === 0) { window.location.href = href; return; }
+		var target = document.querySelector(href);
+		if (!target) return;
+		var b = land(target);
+		Array.prototype.forEach.call(document.querySelectorAll('.is-flagged'), function (n) { n.classList.remove('is-flagged'); });
+		if (target.id !== 'top') {
+			var flag = b.classList.contains('agents') || b.classList.contains('sub') ? b.closest('.panel') : b;
+			flag.classList.add('is-flagged');
+			setTimeout(function () { flag.classList.remove('is-flagged'); }, 2200);
+		}
+		if (!fromGuide) {
+			// An answer's button: show the narration for where it lands
+			var idx = TOUR.map(function (t) { return t.at; }).indexOf(href);
+			if (idx > -1) narrate(idx);
+			setMode('guide');
+			if (!desktop.matches) setCollapsed(true);
+			var heading = b.querySelector('h2, h3');
+			if (heading) { heading.setAttribute('tabindex', '-1'); heading.focus({ preventScroll: true }); }
+		}
+	}
+
+	// In-page links (rail, Start the descent, home pill) land the same way.
+	document.addEventListener('click', function (e) {
+		var a = e.target.closest('a[href^="#"]');
+		if (!a || a.classList.contains('skip')) return;
+		var target = document.querySelector(a.getAttribute('href'));
+		if (!target) return;
+		e.preventDefault();
+		land(target);
+		history.replaceState(null, '', a.getAttribute('href'));
+	});
+
+	/* Written answers, matched by keyword */
 
 	// Written answers, most specific first: ties go to the earlier entry.
 	var QA = [
@@ -295,7 +503,7 @@
 		{"id": "ripple", "q": "What does Dimitri do at Ripple?", "keys": ["ripple", "ripples", "rippel", "customer solutions", "north america", "pre-sales", "presales", "pre sales", "sales engineer", "do sales", "in sales", "sales role"], "a": "Since Aug 2025, Dimitri has been a Customer Solutions Director at Ripple, leading the North America Customer Solutions team as a player-coach and advising 20+ banks on digital-asset strategy, custody, and key management. Dimitri also builds much of what the team demos and teaches with.", "go": [["Show me Ripple", "#camp3"]]},
 		{"id": "aws", "q": "What did Dimitri do at AWS?", "keys": ["aws", "amazon", "amazon web services", "solutions architect", "solution architect", "senior sa", "sa", "enterprise accounts", "financial services", "cloud", "at aws", "at amazon", "aws experience"], "a": "Five years at AWS, Sep 2020 to Aug 2025, most recently as a Senior Solutions Architect in New York. Dimitri advised ~20 enterprise accounts in financial services and healthcare, drove 30+ migrations, and was pulled into generative AI early by enterprise accounts and ISV partners.", "go": [["Show me AWS", "#camp2"]]},
 		{"id": "travelers", "q": "What did Dimitri do at Travelers?", "keys": ["travelers", "travellers", "traveler", "insurance", "hartford", "connecticut", "accenture", "tech lead", "first job", "early career", "before aws"], "a": "Travelers, Feb 2016 to Aug 2020, as a Tech Lead and Developer in Hartford, CT. Dimitri led seven developers plus an Accenture delivery team migrating legacy financial systems to API and event-driven architectures, including a partner-integration platform handling ~70% of transaction volume.", "go": [["Show me Travelers", "#base"]]},
-		{"id": "education", "q": "Where did Dimitri study?", "keys": ["study", "studied", "school", "college", "university", "universities", "mba", "degree", "degrees", "education", "educated", "graduate", "grad", "quinnipiac", "quinnipac", "quinipiac", "bachelor", "major", "entrepreneurship", "abroad", "masters", "master s"], "a": "Quinnipiac University, 2015: an MBA and a BS in Entrepreneurship and Small Business Management, through a competitively selected 4+1 BS+MBA program, with international coursework in France, Hungary, Italy, and Switzerland.", "go": [["Show me education", "#base"]]},
+		{"id": "education", "q": "Where did Dimitri study?", "keys": ["study", "studied", "school", "college", "university", "universities", "mba", "degree", "degrees", "education", "educated", "graduate", "grad", "quinnipiac", "quinnipac", "quinipiac", "bachelor", "major", "entrepreneurship", "abroad", "masters", "master s"], "a": "Quinnipiac University, 2015: an MBA and a BS in Entrepreneurship and Small Business Management, through a competitively selected 4+1 BS+MBA program, with international coursework in France, Hungary, Italy, and Switzerland.", "go": [["Show me education", "#quinnipiac"]]},
 		{"id": "talks", "q": "Has Dimitri given talks?", "chip": 6, "chipText": "Any talks or writing?", "keys": ["talk", "talks", "speak", "speaker", "speaking", "spoke", "conference", "conferences", "keynote", "presentation", "podcast", "podcasts", "youtube", "you tube", "video", "videos", "watch", "apex", "reinvent", "re invent", "builders fair", "global summit", "block stars", "blockstars", "panel", "david schwartz", "schwartz", "events", "xrpl apex"], "a": "Dimitri spoke at XRPL Apex in 2023, 2024, and 2025, all on YouTube, and at the InterSystems Global Summit from 2022 to 2025, and gave live demos at the AWS re:Invent Builders Fair in 2021 and 2022. There's also the Block Stars podcast with David Schwartz, Ripple's CTO Emeritus. On the writing side, there are three AWS blog posts from 2024, including one on orchestrating generative AI workflows with Amazon Bedrock and AWS Step Functions.", "go": [["Show me the talks", "#talks"]]},
 		{"id": "writing", "q": "Has Dimitri published anything?", "keys": ["publish", "publication", "blog", "blogs", "article", "articles", "writing", "written", "write", "wrote", "author", "authored", "post", "posts", "paper", "papers", "content", "reading", "something to read"], "a": "Three posts on AWS blogs in 2024: orchestrating generative AI workflows with Amazon Bedrock and AWS Step Functions (Machine Learning Blog), InterSystems IRIS Cloud SQL and IntegratedML (Partner Network Blog), and application-consistent Amazon EBS Snapshots for InterSystems IRIS (Storage Blog).", "go": [["Show me the writing", "#talks"]]},
 		{"id": "certs", "q": "What certifications does Dimitri hold?", "keys": ["certif", "certs", "cert", "certificate", "credential", "credentials", "professional", "scrum", "safe", "agile", "sa pro", "exam"], "a": "AWS Solutions Architect - Professional, and SAFe 4.0 Certified Scrum Master.", "go": [["Show me the skills", "#skills"]]},
@@ -321,13 +529,6 @@
 	];
 	var FALLBACK = "I don't have a written answer for that one. Try one of the questions below, or send Dimitri an email.";
 
-	var ask = document.getElementById('ask');
-	var askLog = document.getElementById('ask-log');
-	var askChips = document.getElementById('ask-chips');
-	var askForm = document.getElementById('ask-form');
-	var askInput = document.getElementById('ask-input');
-	var fab = document.getElementById('ask-fab');
-
 	function match(text) {
 		var t = ' ' + text.toLowerCase().replace(/[^a-z0-9\- ]/g, ' ') + ' ';
 		var best = null, bestScore = 0;
@@ -344,64 +545,14 @@
 
 	function reply(question, item) {
 		askLog.appendChild(el('div', 'msg msg-user', question));
-		var answer = el('div', 'msg msg-agent', item ? item.a : FALLBACK);
-		askLog.appendChild(answer);
+		askLog.appendChild(el('div', 'msg msg-agent', item ? item.a : FALLBACK));
 		var links = item ? item.go : [['Email Dimitri', 'mailto:dimitri.code@gmail.com?Subject=Hello%20There']];
-		links.forEach(function (g) {
-			var b = el('button', 'ask-go', g[0]);
-			b.type = 'button';
-			b.addEventListener('click', function () { travel(g[1]); });
-			askLog.appendChild(b);
-		});
+		links.forEach(function (g) { button(askLog, g[0], 'ask-go', function () { travel(g[1]); }); });
 		askLog.scrollTop = askLog.scrollHeight;
 	}
 
-	// Scroll so the target's box sits just under the top bar, whole and readable.
-	function land(target) {
-		autoScrolling = true;
-		clearTimeout(autoTimer);
-		autoTimer = setTimeout(function () { autoScrolling = false; }, 1400);
-		if (target.id === 'top') { window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); return target; }
-		var box = target.matches('.panel, .day-inner, .agents') ? target : target.querySelector('.panel, .day-inner') || target;
-		var y = box.getBoundingClientRect().top + window.scrollY - LANDING;
-		window.scrollTo({ top: Math.max(0, y), behavior: reduce ? 'auto' : 'smooth' });
-		return box;
-	}
-
-	function travel(href, fromTour) {
-		if (href.indexOf('mailto:') === 0) { window.location.href = href; return; }
-		if (ask.open) ask.close();
-		if (!fromTour) endTour();
-		var target = document.querySelector(href);
-		if (!target) return;
-		var box = land(target);
-		var flag = box.classList.contains('agents') ? box.closest('.panel') : box;
-		Array.prototype.forEach.call(document.querySelectorAll('.is-flagged'), function (n) { n.classList.remove('is-flagged'); });
-		if (target.id !== 'top') {
-			flag.classList.add('is-flagged');
-			setTimeout(function () { flag.classList.remove('is-flagged'); }, 2200);
-		}
-		var heading = box.querySelector('h2, h3');
-		if (heading && !fromTour) { heading.setAttribute('tabindex', '-1'); heading.focus({ preventScroll: true }); }
-	}
-
-	// In-page links (rail, Start the descent, home pill) land the same way.
-	document.addEventListener('click', function (e) {
-		var a = e.target.closest('a[href^="#"]');
-		if (!a || a.classList.contains('skip')) return;
-		var target = document.querySelector(a.getAttribute('href'));
-		if (!target) return;
-		e.preventDefault();
-		land(target);
-		history.replaceState(null, '', a.getAttribute('href'));
-	});
-
-
 	QA.filter(function (i) { return i.chip; }).sort(function (a, b) { return a.chip - b.chip; }).forEach(function (item) {
-		var b = el('button', null, item.chipText || item.q);
-		b.type = 'button';
-		b.addEventListener('click', function () { reply(item.q, item); });
-		askChips.appendChild(b);
+		button(askChips, item.chipText || item.q, null, function () { reply(item.q, item); });
 	});
 
 	askForm.addEventListener('submit', function (e) {
@@ -412,125 +563,59 @@
 		askInput.value = '';
 	});
 
-	function openAsk() {
-		if (!askLog.childElementCount) {
-			askLog.appendChild(el('div', 'msg msg-agent', "Here are a few things I can tell you about Dimitri. Pick one, or type a question."));
-		}
-		fab.classList.remove('is-greeting');
-		ask.showModal();
-	}
-
-	Array.prototype.forEach.call(document.querySelectorAll('[data-ask]'), function (b) { b.addEventListener('click', openAsk); });
-	document.getElementById('ask-close').addEventListener('click', function () { ask.close(); });
-	var tipBtn = document.getElementById('tip-btn');
+	modeGuide.addEventListener('click', function () { setMode('guide'); });
+	modeAsk.addEventListener('click', function () { setMode('ask', true); });
+	[modeGuide, modeAsk].forEach(function (t) {
+		t.addEventListener('keydown', function (e) {
+			if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+			e.preventDefault();
+			var ask = mode === 'guide';
+			setMode(ask ? 'ask' : 'guide');
+			(ask ? modeAsk : modeGuide).focus({ preventScroll: true });
+		});
+	});
+	collapseBtn.addEventListener('click', function () { setCollapsed(!collapsed); });
+	guideBtn.addEventListener('click', function () { setCollapsed(!collapsed); });
+	// Collapsed, the whole bubble is a big target to open it again.
+	bubble.addEventListener('click', function (e) {
+		if (collapsed && !e.target.closest('button, a, input')) setCollapsed(false);
+	});
+	dock.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !collapsed) { setCollapsed(true); guideBtn.focus(); } });
 	tipBtn.addEventListener('click', function () {
 		tipBtn.setAttribute('aria-expanded', tipBtn.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
 	});
-	ask.addEventListener('close', function () { tipBtn.setAttribute('aria-expanded', 'false'); });
-	ask.addEventListener('click', function (e) { if (e.target === ask) ask.close(); });
 
-	/* ---------- The guided tour ---------- */
+	if ('ResizeObserver' in window) new ResizeObserver(fitRail).observe(bubble);
+	window.addEventListener('resize', fitRail);
+	desktop.addEventListener && desktop.addEventListener('change', function () { setCollapsed(!desktop.matches); });
 
-	var TOUR = [
-		{ at: '#top', text: "Welcome, traveler. You stand at the summit of Dimitri's trail, where the work is AI, blockchain, and agentic finance. The path runs down through every camp from here. Shall we descend together?" },
-		{ at: '#summit', text: 'The summit is what Dimitri works on now. Just below waits a small sketch: an agent reads a ledger, then asks before it moves any money.' },
-		{ at: '#camp3', text: "Camp 3 is Ripple, since Aug 2025. Dimitri leads the North America Customer Solutions team as a player-coach, and builds a lot: an AI RFP workflow on Claude, the team's demo tools with Claude Code, and internal MCP servers for XRPL." },
-		{ at: '#camp2', text: 'Camp 2 is five years at AWS, where Dimitri got into generative AI early, including the AWS architecture for an AI layer in a healthcare platform.' },
-		{ at: '#base', text: 'Camp 1 is Travelers, 2016 to 2020, where Dimitri led seven developers plus an Accenture delivery team. Quinnipiac waits just below.' },
-		{ at: '#talks', text: 'Back at the trailhead: talks and writing, including three XRPL Apex talks and an AWS post on generative AI workflows.' },
-		{ at: '#skills', text: 'The skills Dimitri gathered along the way, from Claude and MCP to XRPL, Python, and AWS.' },
-		{ at: '#mountains', text: 'And this is where Dimitri spends time off the clock.' },
-		{ at: '#contact', text: "That's the whole trail. To talk with Dimitri, email or LinkedIn is fastest. I'll be here in the corner if you have questions." }
-	];
+	// Start: open on desktop, a slim dock on phones; narrate from wherever the page opened.
+	setCollapsed(!desktop.matches);
+	setMode('guide');
+	narrate(stopInView());
+	setTimeout(function () { dock.classList.add('is-ready'); wave(); if (reduce) fitRail(); }, 900);
 
-	var tour = document.getElementById('tour');
-	var tourStep = document.getElementById('tour-step');
-	var tourText = document.getElementById('tour-text');
-	var tourActions = document.getElementById('tour-actions');
-	var step = -1, tourOpener = null;
+	/* ---------- Photo strip ---------- */
 
-	function tourButton(label, cls, fn) {
-		var b = el('button', cls, label);
-		b.type = 'button';
-		b.addEventListener('click', fn);
-		tourActions.appendChild(b);
-		return b;
+	var strip = document.getElementById('gallery');
+	var stripBtns = Array.prototype.slice.call(document.querySelectorAll('.strip-btn'));
+	function stripEdges() {
+		var max = strip.scrollWidth - strip.clientWidth - 2;
+		var atStart = strip.scrollLeft <= 2, atEnd = strip.scrollLeft >= max;
+		strip.classList.toggle('at-start', atStart);
+		strip.classList.toggle('at-end', atEnd);
+		stripBtns[0].disabled = atStart;
+		stripBtns[1].disabled = atEnd;
 	}
-
-	var waveTimer;
-	function wave() {
-		fab.classList.remove('is-greeting');
-		void fab.offsetWidth;
-		fab.classList.add('is-greeting');
-		clearTimeout(waveTimer);
-		waveTimer = setTimeout(function () { fab.classList.remove('is-greeting'); }, 2000);
-	}
-
-	function goTo(i, focusFirst, following) {
-		step = i;
-		var s = TOUR[i];
-		tour.hidden = false;
-				fab.classList.add('is-touring');
-		tourStep.textContent = i === 0 ? 'Your guide' : 'Stop ' + i + ' of ' + (TOUR.length - 1);
-		tourText.textContent = s.text;
-		tourActions.innerHTML = '';
-		var first;
-		if (i === 0) {
-			first = tourButton('Take the tour', 'primary', function () { goTo(1, true); });
-			tourButton('Ask a question', '', function () { tour.hidden = true; step = -1; fab.classList.remove('is-touring'); openAsk(); });
-		} else if (i < TOUR.length - 1) {
-			tourButton('Back', '', function () { goTo(i - 1, true); });
-			first = tourButton('Next', 'primary', function () { goTo(i + 1, true); });
-		} else {
-			tourButton('Ask a question', '', function () { tour.hidden = true; step = -1; fab.classList.remove('is-touring'); openAsk(); });
-			first = tourButton('Done', 'primary', endTour);
-		}
-		if (i > 0 && !following) travel(s.at, true);
-		if (!following) wave();
-		if (focusFirst) first.focus({ preventScroll: true });
-	}
-
-	function endTour() {
-		if (step === -1) return;
-		var hadFocus = tour.contains(document.activeElement);
-		tour.hidden = true;
-		fab.classList.remove('is-touring');
-		step = -1;
-		if (hadFocus) (tourOpener || fab).focus({ preventScroll: true });
-		tourOpener = null;
-	}
-
-	document.getElementById('tour-close').addEventListener('click', endTour);
-	// While the card is open, the guide follows a visitor who scrolls on their own.
-	function stopInView() {
-		var line = window.innerHeight * 0.45;
-		for (var i = TOUR.length - 1; i > 0; i--) {
-			var t = document.querySelector(TOUR[i].at);
-			var b = t.querySelector('.panel, .day-inner') || t;
-			if (b.getBoundingClientRect().top <= line) return i;
-		}
-		return 0;
-	}
-	var following = false;
-	window.addEventListener('scroll', function () {
-		if (step === -1 || autoScrolling || following) return;
-		following = true;
-		requestAnimationFrame(function () {
-			following = false;
-			var i = stopInView();
-			if (i !== step) goTo(i, false, true);
+	stripBtns.forEach(function (b) {
+		b.addEventListener('click', function () {
+			strip.scrollBy({ left: +b.dataset.dir * strip.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth' });
 		});
-	}, { passive: true });
-	document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && step !== -1 && !ask.open) endTour(); });
-	Array.prototype.forEach.call(document.querySelectorAll('[data-tour]'), function (b) {
-		b.addEventListener('click', function () { tourOpener = b; goTo(1, true); });
 	});
-
-	// The guide introduces Dimitri on every visit, once the page settles.
-	setTimeout(function () {
-		if (ask.open || step !== -1 || window.scrollY > window.innerHeight * 0.5) return;
-		goTo(0, false);
-	}, 1600);
+	strip.addEventListener('scroll', stripEdges, { passive: true });
+	window.addEventListener('resize', stripEdges);
+	strip.addEventListener('load', stripEdges, true);
+	stripEdges();
 
 	/* ---------- Lightbox ---------- */
 

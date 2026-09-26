@@ -36,28 +36,25 @@
 
 	<header class="bar">
 		<a class="mark" id="mark" href="#top" aria-label="Back to the top" tabindex="-1"><span class="fas fa-arrow-up" aria-hidden="true"></span><span class="mark-name">Dimitri Cole Restaino</span></a>
-		<p class="alt-read" id="alt-read" aria-hidden="true"><span class="alt-num" id="alt-num">4,000</span> <span class="alt-unit">m</span></p>
+		<p class="yr-read" id="yr-read" aria-hidden="true"><span id="yr-num">2026</span></p>
 	</header>
 
-	<div class="tour" id="tour" role="region" aria-label="Guided tour" aria-live="polite" hidden>
-		<button class="tour-close" id="tour-close" type="button" aria-label="Close the tour"><span class="fas fa-times" aria-hidden="true"></span></button>
-		<p class="tour-step" id="tour-step"></p>
-		<p class="tour-text" id="tour-text"></p>
-		<div class="tour-actions" id="tour-actions"></div>
-	</div>
 	<nav class="alt" id="alt" aria-label="Sections">
-		<div class="alt-track"><div class="alt-needle" id="alt-needle"></div></div>
-		<ul class="alt-camps">
-			<li style="top:0%"><a href="#summit">Summit</a></li>
-			<li style="top:25%"><a href="#camp3">Ripple</a></li>
-			<li style="top:50%"><a href="#camp2">AWS</a></li>
-			<li style="top:78.6%"><a href="#base">Travelers</a></li>
-			<li style="top:100%"><a href="#trailhead">Trailhead</a></li>
-		</ul>
+		<p class="alt-year" aria-hidden="true"><span id="yr-rail">2026</span></p>
+		<div class="alt-body">
+			<div class="alt-track"><div class="alt-needle" id="alt-needle"></div></div>
+			<ul class="alt-camps">
+				<li style="top:0%"><a href="#summit">Now</a></li>
+				<li style="top:25%"><a href="#camp3">Ripple</a></li>
+				<li style="top:50%"><a href="#camp2">AWS</a></li>
+				<li style="top:75%"><a href="#base">Travelers</a></li>
+				<li style="top:100%"><a href="#quinnipiac">Quinnipiac</a></li>
+			</ul>
+		</div>
 	</nav>
 
 	<main id="main">
-		<section class="leg hero" id="top" data-alt="4000">
+		<section class="leg hero" id="top">
 			<div class="hero-copy">
 				<h1>Dimitri Cole <em>Restaino</em></h1>
 				<p class="hero-line">AI, blockchain, and agentic finance.</p>
@@ -66,7 +63,6 @@
 					<a class="cta" href="#summit">Start the descent
 						<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v11M2 7l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" /></svg>
 					</a>
-					<button class="cta cta-ghost" type="button" data-tour>Take the guided tour</button>
 				</div>
 			</div>
 			<figure class="portrait">
@@ -74,9 +70,9 @@
 			</figure>
 		</section>
 
-		<section class="leg summit" id="summit" data-alt="4000">
+		<section class="leg summit" id="summit">
 			<div class="panel panel-wide">
-				<p class="camp-tag"><b>Summit</b> 4,000 m</p>
+				<p class="camp-tag"><b>Summit</b> Now</p>
 				<h2>What I work on now</h2>
 				<div class="fields">
 					<article class="field">
@@ -118,9 +114,9 @@
 			</div>
 		</section>
 
-		<section class="leg" id="camp3" data-alt="3300">
+		<section class="leg" id="camp3">
 			<div class="panel">
-				<p class="camp-tag"><b>Camp 3</b> 3,300 m</p>
+				<p class="camp-tag"><b>Camp 3</b> 2025 - now</p>
 				<h2>Ripple</h2>
 				<p class="role">Customer Solutions Director<br>New York, NY, Aug 2025 - present</p>
 				<p class="lede">I lead our North America Customer Solutions team and build much of what we demo and teach with.</p>
@@ -135,9 +131,9 @@
 			</div>
 		</section>
 
-		<section class="leg" id="camp2" data-alt="2600">
+		<section class="leg" id="camp2">
 			<div class="panel">
-				<p class="camp-tag"><b>Camp 2</b> 2,600 m</p>
+				<p class="camp-tag"><b>Camp 2</b> 2020 - 2025</p>
 				<h2>Amazon Web Services</h2>
 				<p class="role">Senior Solutions Architect<br>New York, NY, Sep 2020 - Aug 2025</p>
 				<p class="lede">Enterprise accounts and ISV partners pulled me into generative AI early.</p>
@@ -153,9 +149,9 @@
 			</div>
 		</section>
 
-		<section class="leg" id="base" data-alt="1800">
+		<section class="leg" id="base">
 			<div class="panel">
-				<p class="camp-tag"><b>Camp 1</b> 1,800 m</p>
+				<p class="camp-tag"><b>Camp 1</b> 2016 - 2020</p>
 				<h2>Travelers</h2>
 				<p class="role">Tech Lead / Developer<br>Hartford, CT, Feb 2016 - Aug 2020</p>
 				<p class="lede">Where I learned to lead a team.</p>
@@ -163,9 +159,9 @@
 					<li>Led seven developers plus an Accenture delivery team, migrating legacy financial systems to API and event-driven architectures, including a partner-integration platform handling ~70% of transaction volume.</li>
 					<li>Organized an innovation club, developer workshops, and hackathons reaching 1,000+ participants.</li>
 				</ul>
-				<div class="sub">
+				<div class="sub" id="quinnipiac">
 					<h3>Quinnipiac University</h3>
-					<p class="role">MBA and BS in Entrepreneurship &amp; Small Business Management<br>Hamden, CT, 2015</p>
+					<p class="role">MBA and BS in Entrepreneurship &amp; Small Business Management<br>Hamden, CT, 2010 - 2015</p>
 					<ul>
 						<li>Competitively selected for a 4+1 BS+MBA program.</li>
 						<li>International coursework in France, Hungary, Italy, and Switzerland.</li>
@@ -174,7 +170,7 @@
 			</div>
 		</section>
 
-		<div class="ridge-top" id="trailhead" data-alt="1200">
+		<div class="ridge-top" id="trailhead">
 			<section class="day" id="talks">
 				<div class="day-inner">
 					<h2 class="day-title">Talks and writing</h2>
@@ -245,22 +241,26 @@
 				<div class="day-inner">
 					<h2 class="day-title">Chasing mountains</h2>
 					<p class="day-lede">Most of my time off is spent in the mountains, on a snowboard or a trail.</p>
-				</div>
-				<div class="gallery" id="gallery">
-					<a style="--r:1.335" href="images/gallery/large/breck.jpg" data-caption="Breckenridge, Colorado"><img src="images/gallery/grid/breck.jpg" loading="lazy" width="1100" height="824" alt="Breckenridge, Colorado" /></a>
-					<a style="--r:1.780" href="images/gallery/large/bike.jpg" data-caption="Murren, Switzerland"><img src="images/gallery/grid/bike.jpg" loading="lazy" width="1100" height="618" alt="Murren, Switzerland" /></a>
-					<a style="--r:0.750" href="images/gallery/large/brecktop.jpg" data-caption="Breckenridge, Colorado"><img src="images/gallery/grid/brecktop.jpg" loading="lazy" width="825" height="1100" alt="Breckenridge, Colorado" /></a>
-					<a style="--r:0.999" href="images/gallery/large/vail.jpg" data-caption="Vail, Colorado"><img src="images/gallery/grid/vail.jpg" loading="lazy" width="692" height="693" alt="Vail, Colorado" /></a>
-					<a style="--r:1.333" href="images/gallery/large/interlaken.jpg" data-caption="Interlaken, Switzerland"><img src="images/gallery/grid/interlaken.jpg" loading="lazy" width="1100" height="825" alt="Interlaken, Switzerland" /></a>
-					<a style="--r:1.333" href="images/gallery/large/whistlervillage.jpg" data-caption="Whistler Village, British Columbia"><img src="images/gallery/grid/whistlervillage.jpg" loading="lazy" width="1100" height="825" alt="Whistler Village, British Columbia" /></a>
-					<a style="--r:0.840" href="images/gallery/large/camelshump.jpg" data-caption="Camel's Hump, Vermont"><img src="images/gallery/grid/camelshump.jpg" loading="lazy" width="924" height="1100" alt="Camel's Hump, Vermont" /></a>
-					<a style="--r:1.333" href="images/gallery/large/keystone.jpg" data-caption="Keystone, Colorado"><img src="images/gallery/grid/keystone.jpg" loading="lazy" width="1100" height="825" alt="Keystone, Colorado" /></a>
-					<a style="--r:0.750" href="images/gallery/large/breckben.jpg" data-caption="Breckenridge, Colorado"><img src="images/gallery/grid/breckben.jpg" loading="lazy" width="825" height="1100" alt="Breckenridge, Colorado" /></a>
-					<a style="--r:1.333" href="images/gallery/large/ascutney.jpg" data-caption="Ascutney, Vermont"><img src="images/gallery/grid/ascutney.jpg" loading="lazy" width="1100" height="825" alt="Ascutney, Vermont" /></a>
-					<a style="--r:1.333" href="images/gallery/large/murrenbar.jpg" data-caption="Murren, Switzerland"><img src="images/gallery/grid/murrenbar.jpg" loading="lazy" width="1100" height="825" alt="Murren, Switzerland" /></a>
-					<a style="--r:1.332" href="images/gallery/large/parkcity.jpg" data-caption="Park City, Utah"><img src="images/gallery/grid/parkcity.jpg" loading="lazy" width="1100" height="826" alt="Park City, Utah" /></a>
-					<a style="--r:1.086" href="images/gallery/large/stowe.jpg" data-caption="Stowe, Vermont"><img src="images/gallery/grid/stowe.jpg" loading="lazy" width="1100" height="1013" alt="Stowe, Vermont" /></a>
-					<a style="--r:1.333" href="images/gallery/large/whistlerpow.jpg" data-caption="Whistler, British Columbia"><img src="images/gallery/grid/whistlerpow.jpg" loading="lazy" width="1100" height="825" alt="Whistler, British Columbia" /></a>
+					<div class="strip">
+					<div class="gallery" id="gallery" tabindex="0" aria-label="Mountain photos, scroll sideways">
+						<a style="--r:1.335" href="images/gallery/large/breck.jpg" data-caption="Breckenridge, Colorado"><img src="images/gallery/grid/breck.jpg" loading="lazy" width="1100" height="824" alt="Breckenridge, Colorado" /></a>
+						<a style="--r:1.780" href="images/gallery/large/bike.jpg" data-caption="Murren, Switzerland"><img src="images/gallery/grid/bike.jpg" loading="lazy" width="1100" height="618" alt="Murren, Switzerland" /></a>
+						<a style="--r:0.750" href="images/gallery/large/brecktop.jpg" data-caption="Breckenridge, Colorado"><img src="images/gallery/grid/brecktop.jpg" loading="lazy" width="825" height="1100" alt="Breckenridge, Colorado" /></a>
+						<a style="--r:0.999" href="images/gallery/large/vail.jpg" data-caption="Vail, Colorado"><img src="images/gallery/grid/vail.jpg" loading="lazy" width="692" height="693" alt="Vail, Colorado" /></a>
+						<a style="--r:1.333" href="images/gallery/large/interlaken.jpg" data-caption="Interlaken, Switzerland"><img src="images/gallery/grid/interlaken.jpg" loading="lazy" width="1100" height="825" alt="Interlaken, Switzerland" /></a>
+						<a style="--r:1.333" href="images/gallery/large/whistlervillage.jpg" data-caption="Whistler Village, British Columbia"><img src="images/gallery/grid/whistlervillage.jpg" loading="lazy" width="1100" height="825" alt="Whistler Village, British Columbia" /></a>
+						<a style="--r:0.840" href="images/gallery/large/camelshump.jpg" data-caption="Camel's Hump, Vermont"><img src="images/gallery/grid/camelshump.jpg" loading="lazy" width="924" height="1100" alt="Camel's Hump, Vermont" /></a>
+						<a style="--r:1.333" href="images/gallery/large/keystone.jpg" data-caption="Keystone, Colorado"><img src="images/gallery/grid/keystone.jpg" loading="lazy" width="1100" height="825" alt="Keystone, Colorado" /></a>
+						<a style="--r:0.750" href="images/gallery/large/breckben.jpg" data-caption="Breckenridge, Colorado"><img src="images/gallery/grid/breckben.jpg" loading="lazy" width="825" height="1100" alt="Breckenridge, Colorado" /></a>
+						<a style="--r:1.333" href="images/gallery/large/ascutney.jpg" data-caption="Ascutney, Vermont"><img src="images/gallery/grid/ascutney.jpg" loading="lazy" width="1100" height="825" alt="Ascutney, Vermont" /></a>
+						<a style="--r:1.333" href="images/gallery/large/murrenbar.jpg" data-caption="Murren, Switzerland"><img src="images/gallery/grid/murrenbar.jpg" loading="lazy" width="1100" height="825" alt="Murren, Switzerland" /></a>
+						<a style="--r:1.332" href="images/gallery/large/parkcity.jpg" data-caption="Park City, Utah"><img src="images/gallery/grid/parkcity.jpg" loading="lazy" width="1100" height="826" alt="Park City, Utah" /></a>
+						<a style="--r:1.086" href="images/gallery/large/stowe.jpg" data-caption="Stowe, Vermont"><img src="images/gallery/grid/stowe.jpg" loading="lazy" width="1100" height="1013" alt="Stowe, Vermont" /></a>
+						<a style="--r:1.333" href="images/gallery/large/whistlerpow.jpg" data-caption="Whistler, British Columbia"><img src="images/gallery/grid/whistlerpow.jpg" loading="lazy" width="1100" height="825" alt="Whistler, British Columbia" /></a>
+					</div>
+						<button class="strip-btn strip-prev" type="button" aria-label="Previous photos" data-dir="-1"><span class="fas fa-chevron-left" aria-hidden="true"></span></button>
+						<button class="strip-btn strip-next" type="button" aria-label="More photos" data-dir="1"><span class="fas fa-chevron-right" aria-hidden="true"></span></button>
+					</div>
 				</div>
 			</section>
 
@@ -281,9 +281,41 @@
 		</div>
 	</main>
 
-	<button class="ask-fab" id="ask-fab" type="button" data-ask aria-haspopup="dialog" aria-label="Ask the guide a question">
-		<span class="guide-bubble" aria-hidden="true">Ask me</span>
-		<svg class="guide" viewBox="0 0 120 140" aria-hidden="true">
+
+
+
+
+	<aside class="dock" id="dock" aria-label="Your guide">
+		<div class="bubble" id="bubble">
+			<div class="bubble-head">
+				<div class="modes" role="tablist" aria-label="Guide modes">
+					<button role="tab" type="button" id="mode-guide" aria-selected="true" aria-controls="pane-guide">Guide</button>
+					<button role="tab" type="button" id="mode-ask" aria-selected="false" aria-controls="pane-ask" tabindex="-1">Ask</button>
+				</div>
+				<div class="tip" id="tip">
+					<button class="tip-btn" id="tip-btn" type="button" aria-label="About these answers" aria-describedby="tip-text" aria-expanded="false"><span class="fas fa-info" aria-hidden="true"></span></button>
+					<p class="tip-text" id="tip-text" role="tooltip">No AI model here. Every answer is written in advance, and most link to the part of the page that covers them.</p>
+				</div>
+				<button class="collapse" id="collapse" type="button" aria-expanded="true" aria-label="Collapse the guide"><span class="fas fa-chevron-down" aria-hidden="true"></span></button>
+			</div>
+			<div class="pane pane-guide" id="pane-guide" role="tabpanel" aria-labelledby="mode-guide">
+				<p class="g-step" id="g-step"></p>
+				<p class="g-short" id="g-short" aria-live="polite"></p>
+				<p class="g-text" id="g-text" aria-live="polite"></p>
+				<div class="g-actions" id="g-actions"></div>
+			</div>
+			<div class="pane pane-ask" id="pane-ask" role="tabpanel" aria-labelledby="mode-ask" hidden>
+				<div class="ask-log" id="ask-log" aria-live="polite"></div>
+				<div class="ask-chips" id="ask-chips"></div>
+				<form class="ask-form" id="ask-form" autocomplete="off">
+					<label class="visually-hidden" for="ask-input">Type a question</label>
+					<input id="ask-input" type="text" placeholder="Type a question" maxlength="140" />
+					<button type="submit" aria-label="Ask"><span class="fas fa-arrow-up" aria-hidden="true"></span></button>
+				</form>
+			</div>
+		</div>
+		<button class="guide-btn" id="guide-btn" type="button" aria-label="Expand the guide" aria-controls="bubble">
+			<svg class="guide" viewBox="0 0 120 140" aria-hidden="true">
 			<ellipse class="g-shadow" cx="60" cy="132" rx="30" ry="5" />
 			<g class="g-body">
 				<!-- staff with a glowing crystal -->
@@ -319,27 +351,8 @@
 				<path d="M60 8 L62.6 14.4 L69 15 L64 19 L65.6 25 L60 21.6 L54.4 25 L56 19 L51 15 L57.4 14.4 Z" fill="#ffb38a" />
 			</g>
 		</svg>
-	</button>
-
-
-
-	<dialog class="ask" id="ask" aria-labelledby="ask-title">
-		<div class="ask-head">
-			<h2 id="ask-title">Ask the guide</h2>
-			<div class="tip">
-				<button class="tip-btn" id="tip-btn" type="button" aria-label="About these answers" aria-describedby="tip-text" aria-expanded="false"><span class="fas fa-info" aria-hidden="true"></span></button>
-				<p class="tip-text" id="tip-text" role="tooltip">No AI model here. Every answer is written in advance, and most link to the part of the page that covers them.</p>
-			</div>
-			<button class="ask-close" id="ask-close" type="button" aria-label="Close" autofocus><span class="fas fa-times" aria-hidden="true"></span></button>
-		</div>
-		<div class="ask-log" id="ask-log" aria-live="polite"></div>
-		<div class="ask-chips" id="ask-chips"></div>
-		<form class="ask-form" id="ask-form" autocomplete="off">
-			<label class="visually-hidden" for="ask-input">Type a question</label>
-			<input id="ask-input" type="text" placeholder="Or type a question" maxlength="140" />
-			<button type="submit" aria-label="Ask"><span class="fas fa-arrow-up" aria-hidden="true"></span></button>
-		</form>
-	</dialog>
+		</button>
+	</aside>
 
 	<dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
 		<figure>
