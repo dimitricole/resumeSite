@@ -199,19 +199,21 @@
 			{ agent: 'The treasury wallet holds 12,480.25 test XRP. This week it sent two payments, 450 and 1,200 XRP, and set one new trust line for a USD stablecoin.' }
 		],
 		execute: [
-			{ user: 'Pay the vendor 250 XRP from the operating wallet.' },
-			{ tool: 'xrpl_prepare_payment', args: '{ "from": "rOperating…3fT8", "to": "rVendor…7mW1", "amount": "250 XRP" }',
-				result: '{ "tx": "Payment", "fee": "0.000012 XRP", "signed": false }' },
-			{ agent: 'Here is the payment, unsigned. It needs your approval before I sign and submit it.' },
+			{ user: "Get today's USD to MXN rate from the premium FX data API." },
+			{ tool: 'http_get', args: '{ "url": "fxdata.example/usd-mxn" }',
+				result: '402 Payment Required\n{ "amount": "0.25", "asset": "RLUSD",\n  "network": "xrpl-testnet",\n  "payTo": "rFxData…8Hq3" }', wait: true },
+			{ agent: 'That API charges 0.25 RLUSD per request, paid on the XRP Ledger testnet. Approve it and I will sign the payment and retry.' },
 			{ approve: true }
 		]
 	};
 	var AFTER_APPROVE = [
-		{ tool: 'xrpl_submit', args: '{ "tx": "Payment", "approved_by": "you" }',
-			result: '{ "result": "tesSUCCESS", "ledger_index": 8841207 }', ok: true },
-		{ agent: 'Done. The payment settled in ledger 8,841,207.' }
+		{ tool: 'xrpl_sign_payment', args: '{ "to": "rFxData…8Hq3",\n  "amount": "0.25 RLUSD" }',
+			result: '{ "signed": true, "approved_by": "you" }' },
+		{ tool: 'http_get', args: '{ "url": "fxdata.example/usd-mxn",\n  "PAYMENT-SIGNATURE": "eyJ4NDAy…" }',
+			result: '200 OK\n{ "usd_mxn": 18.42,\n  "settled": "tesSUCCESS" }', ok: true },
+		{ agent: 'Paid 0.25 RLUSD and got the data: 1 USD = 18.42 MXN. The payment settled on the ledger.' }
 	];
-	var AFTER_CANCEL = [{ agent: 'Cancelled. Nothing was signed or sent.' }];
+	var AFTER_CANCEL = [{ agent: 'Cancelled. Nothing was signed, and no data was bought.' }];
 
 	var log = document.getElementById('console-log');
 	var tabs = Array.prototype.slice.call(document.querySelectorAll('.console-tabs button'));
@@ -226,7 +228,7 @@
 			name.appendChild(el('b', null, step.tool));
 			name.appendChild(document.createTextNode(' via MCP'));
 			head.appendChild(name);
-			head.appendChild(el('span', step.ok ? 'ok' : '', step.ok ? 'settled' : 'ok'));
+			head.appendChild(el('span', step.ok ? 'ok' : step.wait ? 'wait' : '', step.ok ? 'paid' : step.wait ? '402' : 'ok'));
 			box.appendChild(head);
 			box.appendChild(el('pre', null, step.args + '\n→ ' + step.result));
 			log.appendChild(box);
@@ -234,8 +236,8 @@
 			var actions = el('div', 'console-actions');
 			var yes = el('button', 'approve', 'Approve and send'), no = el('button', 'cancel', 'Cancel');
 			yes.type = no.type = 'button';
-			yes.addEventListener('click', function () { actions.remove(); replayBtn.focus(); play(AFTER_APPROVE, id); });
-			no.addEventListener('click', function () { actions.remove(); replayBtn.focus(); play(AFTER_CANCEL, id); });
+			yes.addEventListener('click', function () { actions.remove(); replayBtn.focus({ preventScroll: true }); play(AFTER_APPROVE, id); });
+			no.addEventListener('click', function () { actions.remove(); replayBtn.focus({ preventScroll: true }); play(AFTER_CANCEL, id); });
 			actions.appendChild(yes); actions.appendChild(no);
 			log.appendChild(actions);
 		}
@@ -284,7 +286,7 @@
 		t.addEventListener('keydown', function (e) {
 			if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
 			var n = tabs[(idx + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
-			n.focus(); run(n.dataset.scenario);
+			n.focus({ preventScroll: true }); run(n.dataset.scenario);
 		});
 	});
 	replayBtn.addEventListener('click', function () { run(current); });
@@ -580,7 +582,7 @@
 	bubble.addEventListener('click', function (e) {
 		if (collapsed && !e.target.closest('button, a, input')) setCollapsed(false);
 	});
-	dock.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !collapsed) { setCollapsed(true); guideBtn.focus(); } });
+	dock.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !collapsed) { setCollapsed(true); guideBtn.focus({ preventScroll: true }); } });
 	tipBtn.addEventListener('click', function () {
 		tipBtn.setAttribute('aria-expanded', tipBtn.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
 	});
@@ -642,7 +644,7 @@
 			if (e.key === 'ArrowRight') show(at + 1);
 		});
 		box.addEventListener('click', function (e) { if (e.target === box || e.target.tagName === 'FIGURE') box.close(); });
-		box.addEventListener('close', function () { lbImg.removeAttribute('src'); items[at].focus(); });
+		box.addEventListener('close', function () { lbImg.removeAttribute('src'); items[at].focus({ preventScroll: true }); });
 		var sx = null;
 		box.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
 		box.addEventListener('touchend', function (e) {
