@@ -12,6 +12,14 @@
 		if (text != null) n.textContent = text;
 		return n;
 	}
+	// A row that scrolls sideways only follows focus to an item that is wholly hidden, so bring a half-shown one in,
+	// a frame later so the browser's own focus scrolling can't cancel it (Safari's does)
+	function followFocus(row, inline) {
+		row.addEventListener('focusin', function (e) {
+			var t = e.target;
+			if (t !== row && t.matches(':focus-visible')) requestAnimationFrame(function () { t.scrollIntoView({ block: 'nearest', inline: inline, behavior: reduce ? 'auto' : 'smooth' }); });
+		});
+	}
 
 	/* ---------- Scene: sky, stars, sun, ridgelines ---------- */
 
@@ -346,6 +354,9 @@
 	// the rail steps aside instead of shrinking.
 	var BUBBLE_ROOM = 312, GUIDE_ROOM = 190, RAIL_TOP = 150;
 	function fitRail() {
+		// Below desktop an open bubble covers more of the screen, so focus lands clear of it
+		if (desktop.matches || collapsed) document.documentElement.style.removeProperty('--cover');
+		else document.documentElement.style.setProperty('--cover', bubble.offsetHeight + 'px');
 		if (!desktop.matches) { rail.style.removeProperty('--rail-h'); rail.classList.remove('is-cramped'); return; }
 		var h = Math.min(420, window.innerHeight - RAIL_TOP - GUIDE_ROOM - BUBBLE_ROOM);
 		rail.style.setProperty('--rail-h', Math.max(0, h) + 'px');
@@ -386,6 +397,8 @@
 	function narrate(i) {
 		step = i;
 		var s = TOUR[i];
+		// The buttons are rebuilt below, so note the focused one to hand focus on
+		var held = gActions.contains(document.activeElement) ? document.activeElement.textContent : null;
 		gStep.textContent = i === 0 ? 'Your guide' : 'Stop ' + i + ' of ' + (TOUR.length - 1);
 		gText.textContent = s.text;
 		gShort.textContent = s.short;
@@ -400,6 +413,10 @@
 			button(gActions, 'Ask a question', '', function () { setMode('ask', true); });
 			button(gActions, 'Back to the top', 'primary', function () { go(0); });
 		}
+		if (held !== null) {
+			var same = Array.prototype.filter.call(gActions.children, function (b) { return b.textContent === held; })[0];
+			(same || gActions.querySelector('.primary')).focus({ preventScroll: true });
+		}
 		fitRail();
 	}
 
@@ -407,23 +424,32 @@
 		narrate(i);
 		travel(TOUR[i].at, true);
 		wave();
-		var next = gActions.querySelector('.primary');
-		if (next && dock.contains(document.activeElement)) next.focus({ preventScroll: true });
 	}
 
-	// The guide narrates wherever the visitor is, however they got there.
+	// The guide narrates wherever the visitor is, however they got there: the last stop whose box crossed the reading line.
+	var READ_LINE = 0.45;
+	function stopIndex(href) { return TOUR.map(function (t) { return t.at; }).indexOf(href); }
+	// Where a stop's box starts. Snowy Ghost's ghost sits above its panel, so that stop starts with him.
+	function edgeOf(b) { return b.querySelector('.drift') || b; }
+	function stopTop(i) {
+		var t = document.querySelector(TOUR[i].at);
+		return edgeOf(t.querySelector('.panel, .day-inner') || t).getBoundingClientRect().top;
+	}
+	function atEnd() { return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2; }
 	function stopInView() {
-		var line = window.innerHeight * 0.45;
+		// Below desktop the last card can't rise to the line, so the page's end is the last stop
+		if (atEnd()) return TOUR.length - 1;
+		var line = window.innerHeight * READ_LINE;
 		for (var i = TOUR.length - 1; i > 0; i--) {
-			var t = document.querySelector(TOUR[i].at);
-			var b = t.querySelector('.panel, .day-inner') || t;
-			if (b.getBoundingClientRect().top <= line) return i;
+			if (stopTop(i) <= line) return i;
 		}
 		return 0;
 	}
-	var following = false;
+	var following = false, settle;
 	window.addEventListener('scroll', function () {
-		if (autoScrolling || following) return;
+		// A trip settles once its smooth scroll stops, however long that takes
+		if (autoScrolling) { clearTimeout(autoTimer); autoTimer = setTimeout(settle, 150); return; }
+		if (following) return;
 		following = true;
 		requestAnimationFrame(function () {
 			following = false;
@@ -436,16 +462,19 @@
 	function land(target) {
 		autoScrolling = true;
 		clearTimeout(autoTimer);
-		autoTimer = setTimeout(function () {
+		var chosen = stopIndex('#' + target.id);
+		settle = function () {
 			autoScrolling = false;
-			var i = stopInView();
+			// Keep the stop traveled to if it reached the line or the page's end, which below desktop the last two share
+			var top = chosen > -1 ? stopTop(chosen) : -1;
+			var i = top >= 0 && (top <= window.innerHeight * READ_LINE || atEnd()) ? chosen : stopInView();
 			if (i !== step) narrate(i);
-		}, 1400);
+		};
+		// For a trip that never scrolls; any scroll re-arms it
+		autoTimer = setTimeout(settle, 1400);
 		if (target.id === 'top') { window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); return target; }
 		var b = target.matches('.panel, .day-inner, .agents, .sub') ? target : target.querySelector('.panel, .day-inner') || target;
-		// Snowy Ghost's ghost sits above its panel, so land on him
-		var edge = b.querySelector('.drift') || b;
-		window.scrollTo({ top: Math.max(0, edge.getBoundingClientRect().top + window.scrollY - LANDING), behavior: reduce ? 'auto' : 'smooth' });
+		window.scrollTo({ top: Math.max(0, edgeOf(b).getBoundingClientRect().top + window.scrollY - LANDING), behavior: reduce ? 'auto' : 'smooth' });
 		return b;
 	}
 
@@ -462,7 +491,7 @@
 		}
 		if (!fromGuide) {
 			// An answer's button: show the narration for where it lands
-			var idx = TOUR.map(function (t) { return t.at; }).indexOf(href);
+			var idx = stopIndex(href);
 			if (idx > -1) narrate(idx);
 			setMode('guide');
 			if (!desktop.matches) setCollapsed(true);
@@ -562,6 +591,8 @@
 		button(askChips, item.chipText || item.q, null, function () { reply(item.q, item); });
 	});
 
+	followFocus(askChips, 'nearest');
+
 	askForm.addEventListener('submit', function (e) {
 		e.preventDefault();
 		var text = askInput.value.trim();
@@ -632,6 +663,7 @@
 			strip.scrollBy({ left: +b.dataset.dir * strip.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth' });
 		});
 	});
+	followFocus(strip, 'start');
 	strip.addEventListener('scroll', stripEdges, { passive: true });
 	window.addEventListener('resize', stripEdges);
 	strip.addEventListener('load', stripEdges, true);
