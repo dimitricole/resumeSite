@@ -363,23 +363,35 @@ main { position: relative; z-index: 2; }
 }
 .oven-phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 33px 33px 0 0; }
 
-/* Glitch on the open panel, its card animated as in the app */
+/* Glitch on the open panel, its cards moving as in the app */
 .glitch {
 	display: grid; grid-template-columns: clamp(170px, 19vw, 230px) minmax(0, 1fr); gap: clamp(20px, 3vw, 38px);
 	align-items: start; margin-top: clamp(28px, 3.5vw, 42px);
 }
-/* A hand of its three kinds of card, edged in the app's colors, The Algorithm in front where its colors show */
+/* A hand of its three kinds of card, edged in the app's light-scheme colors, The Algorithm in front.
+   Each face is a symbol in its middle, so the fan overlaps only the cards' edges. */
 .glitch-hand { position: relative; }
 .hand { position: relative; margin: 0; aspect-ratio: 1.4; }
 .card {
-	position: absolute; top: 15%; width: 50%; aspect-ratio: 1; overflow: hidden;
-	border-radius: 12px; border: 1.5px solid; background: #000;
+	position: absolute; top: 15%; width: 36%; aspect-ratio: 1; overflow: hidden;
+	border-radius: 14%; border: 1.5px solid; background: #0b0d12;
 	box-shadow: 0 16px 30px -16px rgba(16, 19, 42, 0.7);
 }
-.card img { width: 100%; height: 100%; object-fit: cover; }
+.card svg { display: block; width: 100%; height: 100%; }
+/* As in the app, a Glitch's legs rock 7 degrees about its hips, 0.8 s a cycle, and The Algorithm blinks every 4.5 s */
+.card-legs-l, .card-legs-r, .card-eye { transform-box: view-box; }
+.card-legs-l { transform-origin: 32% 58%; }
+.card-legs-r { transform-origin: 68% 58%; }
+.card-eye { transform-origin: 50% 50%; }
+.hand.is-moving .card-legs-l { animation: card-scuttle-l 0.4s linear infinite alternate; }
+.hand.is-moving .card-legs-r { animation: card-scuttle-r 0.4s linear infinite alternate; }
+.hand.is-moving .card-eye { animation: card-blink 4.5s linear infinite; }
+@keyframes card-scuttle-l { to { transform: rotate(7deg); } }
+@keyframes card-scuttle-r { to { transform: rotate(-7deg); } }
+@keyframes card-blink { 0%, 92% { transform: scaleY(1); } 96% { transform: scaleY(0.08); } 100% { transform: scaleY(1); } }
 .card-null { left: 0; border-color: #2b67ae; transform: rotate(-12deg); }
 .card-glitch { right: 0; border-color: #c0392b; transform: rotate(11deg); }
-.card-algorithm { left: 25%; top: 3%; z-index: 1; border-color: #6e6e30; }
+.card-algorithm { left: 32%; top: 3%; z-index: 1; border-color: #6e6e30; }
 .card-pause {
 	position: absolute; right: 2px; bottom: 2px; width: 44px; height: 44px; border-radius: 50%;
 	display: grid; place-items: center; cursor: pointer;

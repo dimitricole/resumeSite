@@ -633,14 +633,15 @@
 	narrate(stopInView());
 	setTimeout(function () { dock.classList.add('is-ready'); wave(); if (reduce) fitRail(); }, 900);
 
-	/* ---------- Snowy Ghost: the Glitch card moves as in the app, with a pause ---------- */
+	/* ---------- Snowy Ghost: Glitch's cards move as in the app, with a pause ---------- */
 
-	var cardArt = document.getElementById('glitch-art'), cardPause = document.getElementById('card-pause');
+	var hand = document.querySelector('.hand'), cardPause = document.getElementById('card-pause');
 	if (!reduce) {
+		hand.classList.add('is-moving');
 		cardPause.hidden = false;
 		cardPause.addEventListener('click', function () {
 			var paused = cardPause.getAttribute('aria-pressed') !== 'true';
-			cardArt.src = paused ? cardArt.dataset.still : cardArt.dataset.moving;
+			hand.classList.toggle('is-moving', !paused);
 			cardPause.setAttribute('aria-pressed', paused);
 			cardPause.firstChild.className = 'fas ' + (paused ? 'fa-play' : 'fa-pause');
 		});

@@ -20,7 +20,7 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
 	<link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
-	<link rel="stylesheet" href="assets/css/site.css?v=5" />
+	<link rel="stylesheet" href="assets/css/site.css?v=6" />
 	<script>document.documentElement.classList.add('js');</script>
 </head>
 
@@ -210,12 +210,10 @@
 					<article class="glitch">
 						<div class="glitch-hand">
 							<figure class="hand" role="img" aria-label="Glitch's three kinds of card: Null, Glitch and The Algorithm">
-								<span class="card card-null"><img src="images/studio/null-card.webp" width="360" height="360" loading="lazy" alt="" /></span>
-								<span class="card card-algorithm"><img src="images/studio/algorithm-still.webp" width="289" height="296" loading="lazy" alt="" /></span>
-								<span class="card card-glitch"><picture>
-									<source media="(prefers-reduced-motion: reduce)" srcset="images/studio/glitch-still.webp" />
-									<img id="glitch-art" src="images/studio/glitch-card.webp" data-still="images/studio/glitch-still.webp" data-moving="images/studio/glitch-card.webp" width="480" height="480" loading="lazy" alt="" />
-								</picture></span>
+								<!-- The app's cards, from client/components/CardIcon.tsx in the Glitch repo -->
+								<span class="card card-null"><svg viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="#679ad1" stroke-width="7" stroke-linecap="round"><circle cx="50" cy="50" r="23" /><path d="M31 73 L69 27" /></g></svg></span>
+								<span class="card card-algorithm"><svg viewBox="0 0 100 100" aria-hidden="true"><g class="card-eye"><path d="M10 50 Q50 14 90 50 Q50 86 10 50 Z" fill="#1a1a12" stroke="#b8b88a" stroke-width="5" stroke-linejoin="round" /><circle cx="50" cy="50" r="15" fill="#b8b88a" /><circle cx="50" cy="50" r="6" fill="#0b0d12" /><circle cx="55" cy="45" r="2.5" fill="#f4f1e8" opacity="0.85" /></g></svg></span>
+								<span class="card card-glitch"><svg viewBox="0 0 100 100" aria-hidden="true"><path class="card-legs-l" d="M33 46 L19 40 M31 58 L16 58 M33 70 L20 79" fill="none" stroke="#e86a64" stroke-width="5" stroke-linecap="round" /><path class="card-legs-r" d="M67 46 L81 40 M69 58 L84 58 M67 70 L80 79" fill="none" stroke="#e86a64" stroke-width="5" stroke-linecap="round" /><path d="M45 23 L37 12 M55 23 L63 12" fill="none" stroke="#e86a64" stroke-width="5" stroke-linecap="round" /><circle cx="50" cy="30" r="9" fill="#e86a64" /><ellipse cx="50" cy="59" rx="19" ry="23" fill="#e86a64" /><path d="M50 38 V81" stroke="#0b0d12" stroke-width="3" /></svg></span>
 							</figure>
 							<button class="card-pause" id="card-pause" type="button" aria-label="Pause the card animation" aria-pressed="false" hidden><span class="fas fa-pause" aria-hidden="true"></span></button>
 						</div>
@@ -430,7 +428,7 @@
 		<button class="lb-btn lb-close" id="lb-close" type="button" aria-label="Close"><span class="fas fa-times" aria-hidden="true"></span></button>
 	</dialog>
 
-	<script src="assets/js/site.js?v=5" defer></script>
+	<script src="assets/js/site.js?v=6" defer></script>
 </body>
 
 </html>
