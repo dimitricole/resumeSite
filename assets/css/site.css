@@ -711,6 +711,12 @@ main { padding-bottom: var(--dock); }
 	.console-tabs button { padding: 0 9px; font-size: 0.84rem; }
 	.msg { max-width: 94%; }
 	.lb-prev, .lb-next { top: auto; bottom: 16px; transform: none; }
+	/* Both hero buttons on one line, so the photo stays above the dock */
+	.hero-actions { gap: 8px; }
+	.cta { gap: 10px; padding: 0 18px; }
+}
+@media (max-width: 400px) {
+	.cta { padding: 0 15px; font-size: 0.94rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
