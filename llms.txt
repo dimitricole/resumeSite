@@ -1,0 +1,35 @@
+# Dimitri Cole Restaino
+
+> Solutions architect for AI and cloud who runs Snowy Ghost, his own app company in New York, and is open to applied AI and solutions architecture roles.
+
+Dimitri designs AI systems and builds apps. At Snowy Ghost he makes Ovenlight, Glitch, Dimm and Whengo. His career is in solutions architecture: five years at AWS, then leading a team of solutions architects at Ripple, designing AI and cloud systems with banks and enterprises.
+
+Ripple, Customer Solutions Director, New York, 2025-2026: led the North America customer solutions team of pre-sales solutions architects as a player-coach, advised 20+ banks, designed an AI workflow for answering RFPs, and as an org AI lead for sales ran AI training for 20+ reps.
+
+Amazon Web Services, Senior Solutions Architect, New York, 2020-2025: advised about 20 enterprise accounts in financial services and healthcare, drove 30+ cloud migrations, designed the AWS architecture for the multi-provider AI layer in InterSystems' IntelliCare, and won first place in AWS's Industries AI Heroes hackathon. He also gave 40+ developer workshops and 100+ customer demos.
+
+Travelers, Tech Lead / Developer, Hartford, 2016-2020: led seven developers plus an Accenture delivery team. Education: MBA and BS, Quinnipiac University. Talks: AWS re:Invent Builders Fair (live demos, 2021 and 2022) and InterSystems Global Summit (speaker, 2022-2025).
+
+## Contact
+
+- [Email](mailto:dimitri.code@gmail.com): dimitri.code@gmail.com, for roles and projects
+- [LinkedIn](https://www.linkedin.com/in/dimitricole/): career history and résumé
+- [GitHub](https://github.com/dimitricole): Dimitri's GitHub profile
+
+## Snowy Ghost
+
+- [Snowy Ghost](https://snowyghost.com/): his company, which designs, builds and runs its apps from New York
+- [Ovenlight](https://ovenlight.app/): puts the web apps you or your coding agent built on your iPhone, behind Face ID, over a private connection to your own computer. Coming soon to the App Store.
+- [Glitch on the App Store](https://apps.apple.com/app/id6708241037): a party game of robots, humans and hidden roles for 3 to 12 players
+- [Dimm on the App Store](https://apps.apple.com/app/id6759893856): a calmer Home Screen of calm text widgets
+- [Whengo on the App Store](https://apps.apple.com/app/id6790056272): a weather tracker for people sensitive to heat, poor air and sun
+
+## Writing
+
+- [Orchestrate generative AI workflows with Amazon Bedrock and AWS Step Functions](https://aws.amazon.com/blogs/machine-learning/orchestrate-generative-ai-workflows-with-amazon-bedrock-and-aws-step-functions/): AWS Machine Learning Blog, 2024
+- [Take control of your data with InterSystems IRIS Cloud SQL and IntegratedML](https://aws.amazon.com/blogs/apn/take-control-of-your-data-with-intersystems-iris-cloud-sql-and-intersystems-iris-integratedml/): AWS Partner Network Blog, 2024
+- [Automating application-consistent Amazon EBS Snapshots for InterSystems IRIS](https://aws.amazon.com/blogs/storage/automating-application-consistent-amazon-ebs-snapshots-for-intersystems-iris-databases/): AWS Storage Blog, 2024
+
+## Optional
+
+- [Glitch website](https://playglitchgame.com/): how Glitch plays and what Glitch Pro adds
