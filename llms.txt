@@ -2,11 +2,11 @@
 
 > Solutions architect for AI and cloud who runs Snowy Ghost, his own app company in New York, and is open to applied AI and solutions architecture roles.
 
-Dimitri designs AI systems and builds apps. At Snowy Ghost he makes Ovenlight, Glitch, Dimm and Whengo. His career is in solutions architecture: five years at AWS, then leading a team of solutions architects at Ripple, designing AI and cloud systems with banks and enterprises.
+Dimitri designs AI systems and builds apps. At Snowy Ghost he makes Ovenlight, Glitch, Dimm and Whengo. His career is in solutions architecture: five years at AWS, then leading a team of solutions architects at Ripple, designing AI and cloud systems with banks, healthcare companies and other enterprises.
 
 Ripple, Customer Solutions Director, New York, 2025-2026: led the North America customer solutions team of pre-sales solutions architects as a player-coach, advised 20+ banks, designed an AI workflow for answering RFPs, and as an org AI lead for sales ran AI training for 20+ reps.
 
-Amazon Web Services, Senior Solutions Architect, New York, 2020-2025: advised about 20 enterprise accounts in financial services and healthcare, drove 30+ cloud migrations, designed the AWS architecture for the multi-provider AI layer in InterSystems' IntelliCare, and won first place in AWS's Industries AI Heroes hackathon. He also gave 40+ developer workshops and 100+ customer demos.
+Amazon Web Services, Senior Solutions Architect, New York, 2020-2025: advised about 20 enterprise accounts in healthcare and financial services, drove 30+ cloud migrations, designed the AWS architecture for IntelliCare's AI layer, which draws on models from several providers (IntelliCare, from InterSystems, is the first AI-native EHR to earn EU MDR Class IIa certification), co-designed how its models were scored by clinical task, and won first place in AWS's Industries AI Heroes hackathon. He also gave 40+ developer workshops and 100+ customer demos.
 
 Travelers, Tech Lead / Developer, Hartford, 2016-2020: led seven developers plus an Accenture delivery team. Education: MBA and BS, Quinnipiac University. Talks: AWS re:Invent Builders Fair (live demos, 2021 and 2022) and InterSystems Global Summit (speaker, 2022-2025).
 
@@ -19,10 +19,12 @@ Travelers, Tech Lead / Developer, Hartford, 2016-2020: led seven developers plus
 ## Snowy Ghost
 
 - [Snowy Ghost](https://snowyghost.com/): his company, which designs, builds and runs its apps from New York
-- [Ovenlight](https://ovenlight.app/): puts your own web apps, built by you or your coding agent, on your iPhone behind Face ID, over a private connection to your own computer. Coming soon to the App Store.
-- [Glitch on the App Store](https://apps.apple.com/app/id6708241037): a party game of robots, humans and hidden roles for 3 to 12 players
-- [Dimm on the App Store](https://apps.apple.com/app/id6759893856): a calmer Home Screen of calm text widgets
-- [Whengo on the App Store](https://apps.apple.com/app/id6790056272): a weather tracker for people sensitive to heat, poor air and sun
+- [Ovenlight](https://ovenlight.app/): opens your own web apps, built by you or your coding agent, on your iPhone behind Face ID, served from your own computer and shared only with the people you invite. Its connector is also an MCP server, so a coding agent can publish an app, check it and read its logs.
+- [Ovenlight on the App Store](https://apps.apple.com/app/id6817561066): free for iPhone
+- [Ovenlight on GitHub](https://github.com/snowy-ghost/ovenlight): source code for the iPhone app, the Android app and the connector, under the Apache License 2.0, with setup and security docs
+- [Glitch on the App Store](https://apps.apple.com/app/id6708241037): a party game of humans and hidden robots for 3 to 12 players, each on their own iPhone or iPad. Joining is free.
+- [Dimm on the App Store](https://apps.apple.com/app/id6759893856): Home Screen widgets that list your apps by name instead of icons, with layouts that can switch on a schedule or follow a Focus
+- [Whengo on the App Store](https://apps.apple.com/app/id6790056272): a weather tracker for people sensitive to heat, poor air and sun, which scores every hour of the week ahead against their own limits
 
 ## Talks
 
