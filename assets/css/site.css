@@ -580,7 +580,7 @@ g.live .head { fill: var(--ember); }
     content: " " attr(href); display: block; font: 400 8pt/1.4 var(--mono); color: var(--ink-3); word-break: break-all; text-decoration: none;
   }
   .badge img, .site-link .gh { display: none; }
-  .site-link { display: block; min-height: 0; }
+  .site-link, .sg-lead .foot .btn { display: block; height: auto; min-height: 0; line-height: inherit; }
   .badge::before { content: "App Store"; font-weight: 500; }
   .site-foot { padding: 8pt 0 0; }
   a, .textlink { text-decoration: none; }
