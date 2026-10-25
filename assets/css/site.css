@@ -341,6 +341,7 @@ g.live .head { fill: var(--ember); }
 .facts dt { font: 500 12px/1.75 var(--mono); color: var(--ink-3); }
 .facts dd { min-width: 0; }
 .sg-lead .foot { padding-top: 28px; gap: 8px 20px; font-size: 15px; }
+.sg-lead .foot .btn { height: 40px; }
 .phones { position: relative; min-height: 400px; }
 .phone {
   position: absolute; border-radius: 34px; border: 8px solid var(--surface); background: var(--surface); overflow: hidden;

@@ -29,7 +29,7 @@ Travelers, Tech Lead / Developer, Hartford, 2016-2020: led seven developers plus
 ## Talks
 
 - [XRPL Apex 2025](https://www.youtube.com/watch?v=R8cc6_4WKvw): AI and blockchain, on YouTube
-- [Block Stars podcast](https://www.youtube.com/watch?v=zu2UvS9TCMI): with David Schwartz, Ripple's CTO Emeritus, on YouTube
+- [Block Stars podcast](https://www.youtube.com/watch?v=zu2UvS9TCMI): a 2025 episode with David Schwartz, Ripple's CTO Emeritus, on YouTube
 - [XRPL Apex 2024](https://www.youtube.com/watch?v=nXY888BiEW0): AI and blockchain, on YouTube
 - [XRPL Apex 2023](https://www.youtube.com/watch?v=2m6ikbzef_4): XRPL development on AWS, on YouTube
 
