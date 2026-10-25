@@ -309,8 +309,12 @@
   // every id is plain ASCII, so the hash needs no decoding (and a malformed one can't throw)
   const pinTo = (hash) => pinAt(sectionOf(document.getElementById(hash.slice(1))));
   // a link, the back button, a reload or keyboard focus pins its target; the reader's own scrolling unpins it
-  addEventListener('click', (e) => { const a = e.target.closest('a[href^="#"]'); if (a) pinTo(a.hash); });
-  addEventListener('hashchange', () => { pinTo(location.hash); measure(); });
+  addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (a && !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)) pinTo(a.hash);
+  });
+  // Chromium fires hashchange before Back restores the scroll, so only a pin measures now
+  addEventListener('hashchange', () => { pinTo(location.hash); if (pin >= 0) measure(); });
   addEventListener('focusin', (e) => { const k = sectionOf(e.target); if (k >= 0) { pinAt(k); measure(); } });
   for (const ev of ['touchstart', 'pointerdown', 'keydown'])
     addEventListener(ev, (e) => { if (e.key !== 'Tab') pin = -1; }, { passive: true });
