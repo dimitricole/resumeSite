@@ -1,0 +1,17 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ghost body -->
+  <path d="M50 180 Q50 200 70 200 L130 200 Q150 200 150 180 L150 80 Q150 30 100 30 Q50 30 50 80 Z" fill="white" stroke="black" stroke-width="4"/>
+  
+  <!-- Eyes -->
+  <circle cx="80" cy="90" r="10" fill="black"/>
+  <circle cx="120" cy="90" r="10" fill="black"/>
+  
+  <!-- Mouth -->
+  <path d="M85 130 Q100 140 115 130" fill="none" stroke="black" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Bottom curves -->
+  <path d="M50 180 Q60 190 70 180" fill="white" stroke="black" stroke-width="4"/>
+  <path d="M80 180 Q90 190 100 180" fill="white" stroke="black" stroke-width="4"/>
+  <path d="M110 180 Q120 190 130 180" fill="white" stroke="black" stroke-width="4"/>
+  <path d="M140 180 Q150 190 150 180" fill="white" stroke="black" stroke-width="4"/>
+</svg>
