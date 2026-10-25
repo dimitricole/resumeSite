@@ -36,6 +36,9 @@
   // smooth scroll can start with that section off screen, so the pin holds for 1.5 s, then only
   // while the section is on screen
   let pin = -1, pinT = 0, pinCheck = 0;
+  // the bottom of the page completes the run only when the reader's own scrolling took them there,
+  // not a jump or Back (Chromium can leave Back at the bottom if a jump's smooth scroll was still going)
+  let byReader = true;
   let tPrev = performance.now();
 
   function measure() {
@@ -48,7 +51,7 @@
     }
     if (pin >= 0) i = pin;
     // scrolling to the bottom yourself runs Contact, however short it is
-    const atEnd = pin < 0 && innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
+    const atEnd = pin < 0 && byReader && innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
     if (atEnd) i = last;
     const r = sections[i].getBoundingClientRect();
     frac = i === last || atEnd ? 1 : Math.min(1, Math.max(0, (line - r.top) / r.height));
@@ -349,7 +352,7 @@
   /* ---- Wiring ---- */
   const sectionOf = (el) => el ? sections.findIndex(s => s.contains(el)) : -1;
   // when the hold ends, check the pin even if nothing scrolls: a reload can restore a position far from the hash
-  const pinAt = (k) => { pin = k; pinT = performance.now(); clearTimeout(pinCheck); pinCheck = setTimeout(measure, 1600); };
+  const pinAt = (k) => { pin = k; byReader = false; pinT = performance.now(); clearTimeout(pinCheck); pinCheck = setTimeout(measure, 1600); };
   // every id is plain ASCII, so the hash needs no decoding (and a malformed one can't throw)
   const pinTo = (hash) => pinAt(sectionOf(document.getElementById(hash.slice(1))));
   // a link, the back button, a reload or keyboard focus pins its target; the reader's own scrolling unpins it
@@ -361,10 +364,10 @@
   addEventListener('hashchange', () => { pinTo(location.hash); if (pin >= 0) measure(); });
   addEventListener('focusin', (e) => { const k = sectionOf(e.target); if (k >= 0) { pinAt(k); measure(); } });
   for (const ev of ['touchstart', 'pointerdown', 'keydown'])
-    addEventListener(ev, (e) => { if (e.key !== 'Tab') pin = -1; }, { passive: true });
+    addEventListener(ev, (e) => { if (e.key !== 'Tab') { pin = -1; byReader = true; } }, { passive: true });
   // at the bottom a wheel moves nothing, so no scroll event follows
-  addEventListener('wheel', (e) => { if (pin >= 0) { pin = -1; if (e.deltaY > 0) measure(); } }, { passive: true });
-  pinTo(location.hash);
+  addEventListener('wheel', (e) => { pin = -1; byReader = true; if (e.deltaY > 0 && !complete) measure(); }, { passive: true });
+  if (location.hash) pinTo(location.hash);
   let ticking = false;
   addEventListener('scroll', () => {
     if (ticking) return;
