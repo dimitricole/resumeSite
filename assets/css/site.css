@@ -568,6 +568,8 @@ g.live .head { fill: var(--ember); }
   .tile { padding: 10pt; border-radius: 10px; }
   .sg-lead, .tile, .job, .contact, .proof li, .posts li { break-inside: avoid; }
   .sg-head, .kicker, h2, h3 { break-after: avoid; }
+  /* a job's h3 is alone in its grid row, so its avoid would block every break between rows */
+  .job h3 { break-after: auto; }
   .jobs { margin-top: 8pt; }
   .job { padding: 8pt 0; gap: 12pt; grid-template-columns: 11ch minmax(0, 1fr) minmax(0, 1.6fr); }
   .job p, .job .posts { grid-column: auto; margin-top: 0; }
@@ -580,7 +582,7 @@ g.live .head { fill: var(--ember); }
     content: " " attr(href); display: block; font: 400 8pt/1.4 var(--mono); color: var(--ink-3); word-break: break-all; text-decoration: none;
   }
   .badge img, .site-link .gh { display: none; }
-  .site-link, .sg-lead .foot .btn { display: block; height: auto; min-height: 0; line-height: inherit; }
+  .site-link, .sg-lead .foot .btn { display: block; height: auto; min-height: 0; font-size: inherit; line-height: inherit; }
   .badge::before { content: "App Store"; font-weight: 500; }
   .site-foot { padding: 8pt 0 0; }
   a, .textlink { text-decoration: none; }
