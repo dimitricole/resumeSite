@@ -24,6 +24,8 @@
   const spent = sections.map(() => 0);
   const visited = sections.map((_, i) => i === 0);
   let active = 0, frac = 0;
+  // a jump runs the section that holds its target, even one too low to reach the line
+  let pin = -1;
   const t0 = performance.now();
   let tPrev = t0;
 
@@ -31,7 +33,9 @@
     const line = innerHeight * 0.4;
     let i = 0;
     sections.forEach((s, k) => { if (s.getBoundingClientRect().top <= line) i = k; });
-    const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
+    if (pin >= 0) i = pin;
+    // scrolling to the bottom yourself runs Contact, however short it is
+    const atEnd = pin < 0 && innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
     if (atEnd) i = last;
     const r = sections[i].getBoundingClientRect();
     frac = i === last || atEnd ? 1 : Math.min(1, Math.max(0, (line - r.top) / r.height));
@@ -293,6 +297,22 @@
   }
 
   /* ---- Wiring ---- */
+  const sectionOf = (el) => el ? sections.findIndex(s => s.contains(el)) : -1;
+  const pinTo = (hash) => { pin = hash.length > 1 ? sectionOf(document.getElementById(decodeURIComponent(hash.slice(1)))) : -1; };
+  // a link, the back button, a reload or keyboard focus pins its target; the reader's own scrolling unpins it
+  addEventListener('click', (e) => { const a = e.target.closest('a[href^="#"]'); if (a) pinTo(a.hash); });
+  addEventListener('hashchange', () => { pinTo(location.hash); measure(); });
+  addEventListener('focusin', (e) => { const k = sectionOf(e.target); if (k >= 0) { pin = k; measure(); } });
+  for (const ev of ['touchstart', 'pointerdown', 'keydown'])
+    addEventListener(ev, (e) => { if (e.key !== 'Tab') pin = -1; }, { passive: true });
+  // at the bottom a wheel moves nothing, so no scroll event follows
+  addEventListener('wheel', (e) => { if (pin >= 0) { pin = -1; if (e.deltaY > 0) measure(); } }, { passive: true });
+  pinTo(location.hash);
+  // a reload restores the old scroll position, which can be far from the hash
+  addEventListener('load', () => {
+    const p = pin >= 0 && sections[pin].getBoundingClientRect();
+    if (p && (p.bottom <= 0 || p.top >= innerHeight)) { pin = -1; measure(); }
+  });
   let ticking = false;
   addEventListener('scroll', () => {
     if (ticking) return;

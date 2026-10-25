@@ -461,6 +461,9 @@ g.live .head { fill: var(--ember); }
 .no-js .bar, .no-js .run-head, .no-js .rail-foot, .no-js .step .t, .no-js .step .st,
 .no-js .plan-head .lg, .no-js .state:not(.sr-only) { display: none; }
 .no-js .gn .t small.state { display: none; }
+.no-js .plan { display: none; }
+.no-js [data-state="running"] .node { border-color: var(--line-2); background: var(--bg); }
+.no-js [data-state="running"] .node::before, .no-js [data-state="running"] .node::after { content: none; }
 @media (max-width: 859px) {
   .no-js main::before {
     content: ""; position: absolute; left: calc(var(--gx) - .5px); top: 150px; bottom: 0; width: 1px; background: var(--edge);
