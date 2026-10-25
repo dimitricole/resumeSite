@@ -19,10 +19,17 @@ Travelers, Tech Lead / Developer, Hartford, 2016-2020: led seven developers plus
 ## Snowy Ghost
 
 - [Snowy Ghost](https://snowyghost.com/): his company, which designs, builds and runs its apps from New York
-- [Ovenlight](https://ovenlight.app/): puts the web apps you or your coding agent built on your iPhone, behind Face ID, over a private connection to your own computer. Coming soon to the App Store.
+- [Ovenlight](https://ovenlight.app/): puts your own web apps, built by you or your coding agent, on your iPhone behind Face ID, over a private connection to your own computer. Coming soon to the App Store.
 - [Glitch on the App Store](https://apps.apple.com/app/id6708241037): a party game of robots, humans and hidden roles for 3 to 12 players
 - [Dimm on the App Store](https://apps.apple.com/app/id6759893856): a calmer Home Screen of calm text widgets
 - [Whengo on the App Store](https://apps.apple.com/app/id6790056272): a weather tracker for people sensitive to heat, poor air and sun
+
+## Talks
+
+- [XRPL Apex 2025](https://www.youtube.com/watch?v=R8cc6_4WKvw): AI and blockchain, on YouTube
+- [Block Stars podcast](https://www.youtube.com/watch?v=zu2UvS9TCMI): with David Schwartz, Ripple's CTO Emeritus, on YouTube
+- [XRPL Apex 2024](https://www.youtube.com/watch?v=nXY888BiEW0): AI and blockchain, on YouTube
+- [XRPL Apex 2023](https://www.youtube.com/watch?v=2m6ikbzef_4): XRPL development on AWS, on YouTube
 
 ## Writing
 
