@@ -564,8 +564,11 @@ g.live .head { fill: var(--ember); }
   .sg-lead { display: block; margin-top: 12pt; padding: 12pt; border-radius: 10px; }
   .sg-lead .copy { padding: 0; }
   .facts { display: block; }
+  /* print sets its own three columns, so the screen's container queries stay out of it */
+  .sg .wrap { container-type: normal; }
   .apps-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8pt; margin-top: 8pt; }
   .tile { padding: 10pt; border-radius: 10px; }
+  .tile .tile-top { flex-wrap: wrap; }
   .sg-lead, .tile, .job, .contact, .proof li, .posts li { break-inside: avoid; }
   .sg-head, .kicker, h2, h3 { break-after: avoid; }
   /* a job's h3 is alone in its grid row, so its avoid would block every break between rows */
