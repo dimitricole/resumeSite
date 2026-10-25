@@ -251,7 +251,6 @@ g.live .head { fill: var(--ember); }
 .gn[data-state="running"] {
   border-color: rgba(168, 64, 12, .5); box-shadow: 0 0 0 3px rgba(168, 64, 12, .08);
 }
-.gn .ico { width: 24px; height: 24px; border-radius: 6px; flex: none; }
 .gn .ghost-ico { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; flex: none; }
 .gn .ghost-ico img { width: 17px; height: 17px; }
 .gn .t { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
