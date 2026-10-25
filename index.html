@@ -56,11 +56,12 @@
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
+<p class="sr-only" role="status" id="runStatus"></p>
 
 <!-- Phone and tablet run bar -->
 <nav class="bar" id="bar" aria-label="Sections">
   <div class="bar-top" aria-hidden="true">
-    <span id="barState" data-state="running"><span class="node"></span></span>
+    <span id="barState" data-state="running"><span class="node"></span><span class="endnode"></span></span>
     <span class="now" id="barNow">Start</span>
     <span class="st" id="barSt">running</span>
     <span class="clock" id="barClock">0:00</span>
@@ -92,8 +93,8 @@
         <li class="step" data-state="queued"><a href="#contact"><span class="node" aria-hidden="true"></span><span class="label">Contact</span><span class="t" aria-hidden="true"></span><span class="st">queued</span></a></li>
       </ol>
     </nav>
-    <div class="rail-foot" aria-hidden="true">
-      <div><span>Step</span><b id="railCount">1 of 4</b></div>
+    <div class="rail-foot" id="railFoot" data-state="queued" aria-hidden="true">
+      <div><span id="railFootLabel">Step</span><b><span class="endnode"></span><span id="railCount">1 of 4</span></b></div>
     </div>
   </header>
 
@@ -180,6 +181,7 @@
                 <span class="node" aria-hidden="true"></span>
                 <span class="t"><b>Contact</b><small class="state">queued</small></span>
               </a>
+              <span class="gend" data-node="end" data-state="queued" aria-hidden="true"><span class="endnode"></span><span class="t"><b class="end-label"></b><small class="end-time"></small></span></span>
             </nav>
           </div>
         </div>
@@ -219,7 +221,10 @@
               <div><dt>runs on</dt><dd>Your own computer, over a private connection</dd></div>
               <div><dt>agents</dt><dd>Publish, check and read logs through MCP</dd></div>
             </dl>
-            <div class="foot"><a class="btn" href="https://ovenlight.app">Visit ovenlight.app</a></div>
+            <div class="foot">
+              <a class="btn" href="https://ovenlight.app">Visit ovenlight.app</a>
+              <a class="btn" href="https://github.com/snowy-ghost/ovenlight" aria-label="Ovenlight on GitHub"><svg class="gh" viewBox="0 0 16 16" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+            </div>
           </div>
           <div class="phones">
             <div class="phone a"><img src="images/house-guide-480.webp" srcset="images/house-guide-480.webp 480w, images/house-guide-960.webp 960w" sizes="(max-width: 759px) 46vw, 252px" width="480" height="1043" loading="lazy" decoding="async" alt="Ovenlight showing a House Guide app with a welcome note, a Wi-Fi card and settling-in tips"></div>
@@ -236,10 +241,13 @@
             <h3 id="glitch-title">Glitch</h3>
             <p class="tag">A party game of robots, humans and hidden roles.</p>
             <p class="body">Each player is secretly dealt a role, human or robot. Humans race to find every Glitch card, while robots try to trick someone into drawing The Algorithm.</p>
-            <p class="players">3 to 12 players, each on their own iPhone or iPad</p>
+            <ul class="specs">
+              <li>3 to 12 players</li>
+              <li>iPhone and iPad</li>
+            </ul>
             <div class="foot">
               <a class="badge" href="https://apps.apple.com/app/id6708241037"><img src="images/app-store-badge.svg" width="120" height="40" loading="lazy" alt="Download Glitch on the App Store"></a>
-              <a class="textlink" href="https://www.playglitchgame.com">playglitchgame.com</a>
+              <a class="textlink site-link" href="https://www.playglitchgame.com">playglitchgame.com</a>
             </div>
           </article>
 
@@ -250,7 +258,11 @@
             </div>
             <h3 id="dimm-title">Dimm</h3>
             <p class="tag">A calmer Home Screen.</p>
-            <p class="body">Calm text widgets.</p>
+            <p class="body">Text widgets that show what you need at a glance, in a quiet style, for a Home Screen in a world that can get loud.</p>
+            <ul class="specs">
+              <li>Home Screen widgets</li>
+              <li>Text, not icons</li>
+            </ul>
             <div class="foot">
               <a class="badge" href="https://apps.apple.com/app/id6759893856"><img src="images/app-store-badge.svg" width="120" height="40" loading="lazy" alt="Download Dimm on the App Store"></a>
             </div>
@@ -262,7 +274,12 @@
               <span class="chip live"><i></i>Live on the App Store</span>
             </div>
             <h3 id="whengo-title">Whengo</h3>
-            <p class="tag">A weather tracker for people sensitive to heat, poor air and sun.</p>
+            <p class="tag">Weather, measured against your limits.</p>
+            <p class="body">A weather tracker for people sensitive to heat, poor air and sun. It scores the conditions against limits you set.</p>
+            <ul class="specs">
+              <li>Heat, air quality, UV</li>
+              <li>Your own limits</li>
+            </ul>
             <div class="foot">
               <a class="badge" href="https://apps.apple.com/app/id6790056272"><img src="images/app-store-badge.svg" width="120" height="40" loading="lazy" alt="Download Whengo on the App Store"></a>
             </div>
@@ -338,7 +355,10 @@
     </section>
   </main>
   <footer class="site-foot">
-    <div class="wrap">Dimitri Cole Restaino, New York</div>
+    <div class="wrap">
+      <p class="run-end" data-state="queued" aria-hidden="true"><span class="endnode"></span><span class="end-label"></span><span class="end-time"></span></p>
+      <p>Dimitri Cole Restaino, New York</p>
+    </div>
   </footer>
   </div>
 </div>

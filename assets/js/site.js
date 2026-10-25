@@ -1,6 +1,12 @@
 // The run: scrolling moves each section from queued to running to done. The rail, the bar,
 // the hero graph and the phone spine all paint the same states.
 (() => {
+  // every word the run shows, in one place
+  const TEXT = {
+    queued: 'queued', running: 'running', done: 'done',
+    step: 'Step', run: 'Run', complete: 'complete', runComplete: 'Run complete',
+    announce: (n) => 'Run complete. All ' + n + ' steps done.',
+  };
   const $ = (id) => document.getElementById(id);
   const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
   const spineMQ = matchMedia('(max-width: 859px)'); // keep in step with site.css
@@ -24,12 +30,13 @@
   const spent = sections.map(() => 0);
   const visited = sections.map((_, i) => i === 0);
   let active = 0, frac = 0;
+  // reaching the last step completes the run: every step is done, the clocks stop and stay stopped
+  let complete = false;
   // a jump runs the section that holds its target, even one too low to reach the line. Its own
   // smooth scroll can start with that section off screen, so the pin holds for 1.5 s, then only
   // while the section is on screen
   let pin = -1, pinT = 0, pinCheck = 0;
-  const t0 = performance.now();
-  let tPrev = t0;
+  let tPrev = performance.now();
 
   function measure() {
     const line = innerHeight * 0.4;
@@ -46,27 +53,49 @@
     const r = sections[i].getBoundingClientRect();
     frac = i === last || atEnd ? 1 : Math.min(1, Math.max(0, (line - r.top) / r.height));
     // a jump counts every step above the landing point as done; their timers keep only the time really spent
-    if (i !== active) { active = i; for (let k = 0; k <= i; k++) visited[k] = true; paintStates(); }
+    if (i !== active) {
+      tick(); // bank the time up to now to the step being left
+      active = i;
+      for (let k = 0; k <= i; k++) visited[k] = true;
+      if (i === last && !complete) finish();
+      paintStates();
+    }
     paintFill();
   }
 
-  const stateOf = (k) => k === active ? 'running' : visited[k] ? 'done' : 'queued';
+  const stateOf = (k) => !complete && k === active ? 'running' : visited[k] ? 'done' : 'queued';
+  const endState = () => complete ? 'done' : 'queued';
+  let doneAt = 0, gStop = 0;
+  function finish() {
+    complete = true;
+    doneAt = clock;
+    gStop = (Math.floor(clock / cycle) + 1) * cycle; // the graph's wave finishes its pass, then rests
+    document.documentElement.classList.add('run-done');
+    $('runStatus').textContent = TEXT.announce(sections.length);
+  }
   const setCurrent = (a, on) => on ? a.setAttribute('aria-current', 'step') : a.removeAttribute('aria-current');
 
   function paintStates() {
     railSteps.forEach((li, k) => {
       li.dataset.state = stateOf(k);
-      li.querySelector('.st').textContent = stateOf(k);
+      li.querySelector('.st').textContent = TEXT[stateOf(k)];
       setCurrent(li.querySelector('a'), k === active);
     });
     barSteps.forEach((li, k) => {
       li.dataset.state = stateOf(k);
       setCurrent(li.querySelector('a'), k === active);
     });
-    $('barState').dataset.state = stateOf(active);
-    $('barNow').textContent = names[active];
-    $('barSt').textContent = stateOf(active);
-    $('railCount').textContent = (active + 1) + ' of ' + sections.length;
+    const atEnd = complete && active === last;
+    $('barState').dataset.state = atEnd ? 'end' : stateOf(active);
+    $('barNow').textContent = atEnd ? TEXT.runComplete : names[active];
+    $('barSt').textContent = atEnd ? '' : TEXT[stateOf(active)];
+    $('railFoot').dataset.state = endState();
+    $('railFootLabel').textContent = complete ? TEXT.run : TEXT.step;
+    $('railCount').textContent = complete ? TEXT.complete : (active + 1) + ' of ' + sections.length;
+    document.querySelectorAll('[data-node="end"], .run-end').forEach(el => {
+      el.dataset.state = endState();
+      el.querySelector('.end-label').textContent = complete ? TEXT.runComplete : '';
+    });
     secMarks.forEach(el => { el.dataset.state = stateOf(+el.dataset.sec); });
     paintGraph();
     buildSpine();
@@ -91,25 +120,27 @@
       const full = nodeY[last] - nodeY[0] || 1;
       const doneTo = nodeY[visited.lastIndexOf(true)] - nodeY[0];
       const at = nodeY[active] - nodeY[0];
-      const liveTo = active === last ? at : at + frac * (nodeY[active + 1] - nodeY[active]);
+      const liveTo = complete || active === last ? at : at + frac * (nodeY[active + 1] - nodeY[active]);
       fillDone.style.transform = 'scaleY(' + (doneTo / full) + ')';
       fillLive.style.transform = 'translateY(' + at + 'px) scaleY(' + ((liveTo - at) / full) + ')';
     }
     barSteps.forEach((li, k) => {
-      const v = k === active ? (k === last ? 1 : Math.max(frac, 0.04)) : visited[k] ? 1 : 0;
+      const v = complete || visited[k] && k !== active ? 1 : k === active ? Math.max(frac, 0.04) : 0;
       li.querySelector('.seg i').style.transform = 'scaleX(' + v + ')';
     });
   }
 
   function paintTimes() {
     railSteps.forEach((li, k) => { li.querySelector('.t').textContent = visited[k] ? fmt(spent[k]) : ''; });
-    const total = fmt(performance.now() - t0);
+    // the run's clock is the time the page was in view, so it always equals the sum of its steps
+    const total = fmt(spent.reduce((a, b) => a + b, 0));
     $('railClock').textContent = total;
     $('barClock').textContent = total;
+    document.querySelectorAll('.end-time').forEach(el => { el.textContent = complete ? total : ''; });
   }
   function tick() {
     const now = performance.now();
-    if (!document.hidden) spent[active] += now - tPrev;
+    if (!document.hidden && !complete) spent[active] += now - tPrev;
     tPrev = now;
     paintTimes();
   }
@@ -118,15 +149,15 @@
   const NS = 'http://www.w3.org/2000/svg';
   const graph = $('graph');
   const svg = graph.querySelector('.edges');
-  const gnodes = [...graph.querySelectorAll('[data-node]')];
+  const gnodes = [...graph.querySelectorAll('[data-step]')];
   const N = (id) => graph.querySelector('[data-node="' + id + '"]');
   const STEP = {};
   gnodes.forEach(n => { STEP[n.dataset.node] = +n.dataset.step; });
   const PARENT = { sg: 'root', experience: 'root', ovenlight: 'sg', apps: 'sg', aws: 'experience', ripple: 'experience', writing: 'experience' };
   const LEAVES = ['ovenlight', 'apps', 'aws', 'ripple', 'writing'];
-  const EDGES = Object.entries(PARENT).map(([b, a]) => [a, b]).concat(LEAVES.map(l => [l, 'contact']));
+  const EDGES = Object.entries(PARENT).map(([b, a]) => [a, b]).concat(LEAVES.map(l => [l, 'contact']), [['contact', 'end']]);
   const SPEED = 150, TAIL = 26, GAP = 0.12, REST = 1.8;
-  let edges = [], starts = [0, 0, 0], cycle = 1;
+  let edges = [], starts = [0, 0, 0, 0], cycle = 1;
 
   const mk = (tag, attrs) => {
     const e = document.createElementNS(NS, tag);
@@ -140,6 +171,13 @@
     return { l, r: l + r.width, cy: t + r.height / 2 };
   }
   function pathFor(a, b) {
+    if (b === 'end') {
+      // the run's end hangs below Contact, on a line from Contact's status node
+      const g = graph.getBoundingClientRect(), c = N(a).getBoundingClientRect();
+      const n = N(b).querySelector('.endnode').getBoundingClientRect();
+      const x = n.left + n.width / 2 - g.left;
+      return `M${x},${c.bottom - g.top} V${n.top - g.top - 3}`;
+    }
     const A = box(a), B = box(b);
     const x1 = a === 'root' ? A.r + 10 : A.r, y1 = A.cy, x2 = B.l, y2 = B.cy;
     const xm = (x1 + x2) / 2, dy = y2 - y1;
@@ -158,9 +196,9 @@
   function build() {
     svg.textContent = '';
     if (!graph.offsetWidth) { edges = []; return; }
-    edges = EDGES.map(([a, b]) => Object.assign(pulse(svg, pathFor(a, b)), { a, b, depth: a === 'root' ? 0 : b === 'contact' ? 2 : 1 }));
+    edges = EDGES.map(([a, b]) => Object.assign(pulse(svg, pathFor(a, b)), { a, b, depth: a === 'root' ? 0 : b === 'contact' ? 2 : b === 'end' ? 3 : 1 }));
     // a wave: every edge at one depth leaves together, the next depth leaves when the last pulse lands
-    const maxd = [0, 0, 0];
+    const maxd = [0, 0, 0, 0];
     edges.forEach(e => { maxd[e.depth] = Math.max(maxd[e.depth], e.len / SPEED); });
     let t = 0;
     starts = maxd.map(m => { const s = t; if (m) t += m + GAP; return s; });
@@ -174,7 +212,7 @@
   function paintEdges() {
     const rank = { '': 0, done: 1, live: 2 };
     edges.forEach(e => {
-      e.kind = kindOf(STEP[e.a], STEP[e.b]);
+      e.kind = e.b === 'end' ? (complete ? 'done' : '') : kindOf(STEP[e.a], STEP[e.b]);
       e.base.setAttribute('class', 'edge ' + e.kind + (e.hot ? ' hot' : ''));
       e.g.setAttribute('class', e.kind);
     });
@@ -185,7 +223,7 @@
     gnodes.forEach(n => {
       const s = stateOf(STEP[n.dataset.node]);
       n.dataset.state = s;
-      n.querySelectorAll('.state').forEach(el => { el.textContent = s; });
+      n.querySelectorAll('.state').forEach(el => { el.textContent = TEXT[s]; });
     });
     if (edges.length) { paintEdges(); if (reduceMQ.matches) draw(); }
   }
@@ -206,12 +244,15 @@
   let clock = 0;
   function draw() {
     drawSpine();
+    const still = complete && clock >= gStop;
     for (const e of edges) {
       // reduced motion: one still pulse sits on each live edge
-      if (reduceMQ.matches) place(e, e.kind === 'live' ? e.len * 0.6 : -1);
+      if (reduceMQ.matches || still) place(e, e.kind === 'live' && !still ? e.len * 0.6 : -1);
       else place(e, ((clock % cycle) - starts[e.depth]) * SPEED);
     }
   }
+  // a complete run comes to rest once its last pulses land
+  const settled = () => complete && clock >= gStop && (!spine || clock >= spine.stop);
 
   let lastT = 0, raf = 0, graphVisible = true;
   function frame(now) {
@@ -219,13 +260,13 @@
     lastT = now;
     clock += dt;
     draw();
-    raf = requestAnimationFrame(frame);
+    raf = settled() ? 0 : requestAnimationFrame(frame);
   }
   function run() {
     cancelAnimationFrame(raf);
     lastT = 0;
     const moving = edges.length ? graphVisible : !!spine;
-    if (!reduceMQ.matches && moving && !document.hidden) raf = requestAnimationFrame(frame);
+    if (!reduceMQ.matches && moving && !document.hidden && !settled()) raf = requestAnimationFrame(frame);
     else draw();
   }
 
@@ -267,11 +308,11 @@
     const items = sections.map(sec => [...sec.querySelectorAll(BRANCH)]
       .filter((el, _, all) => !all.some(o => o !== el && Math.abs(o.offsetTop - el.offsetTop) < 2 && rel(o).l < rel(el).l))
       .map(el => ({ x: rel(el).l - (el.classList.contains('job') ? 8 : 0), y: rel(el.querySelector('.appicon, .yr, h2') || el).cy })));
-    const lastItems = items[last];
-    const yEnd = (lastItems.length ? lastItems[lastItems.length - 1].y : yN[last]) - R;
+    // the trunk ends at the run's end node in the footer
+    const yEnd = rel(document.querySelector('.run-end .endnode')).cy - 9;
     const ye = P.b + 12;
     const head0 = `M${P.cx},${P.b} V${ye - R} Q${P.cx},${ye} ${P.cx - R},${ye} H${gx + R} Q${gx},${ye} ${gx},${ye + R}`;
-    // trunk segments: segment k leads into section k + 1; the last one runs through Contact
+    // trunk segments: segment k leads into section k + 1; the last one runs through Contact to the end
     for (let k = 0; k <= last; k++) {
       const d = k === 0 ? head0 + ` V${yN[1]}` : `M${gx},${yN[k]} V${k === last ? yEnd : yN[k + 1]}`;
       spineSvg.append(mk('path', { d, class: 'edge ' + (k === last ? kindOf(last, last) : kindOf(k, k + 1)) }));
@@ -283,20 +324,23 @@
       e.base.setAttribute('class', 'edge ' + e.kind);
       return e;
     }));
-    // the pulse runs down the spine to the running section, then out along its branches
+    // the pulse runs down the spine to the running section, then out along its branches. Once the
+    // run completes, one last pulse runs the whole spine into the end node
     const target = Math.max(active, 1);
-    const trk = pulse(spineSvg, head0 + ` V${yN[target]}`);
-    trk.kind = stateOf(target) === 'running' ? 'live' : '';
+    const trk = pulse(spineSvg, head0 + ` V${complete ? yEnd : yN[target]}`);
+    trk.kind = complete || stateOf(target) === 'running' ? 'live' : '';
     trk.g.setAttribute('class', trk.kind);
     trk.base.style.stroke = 'none';
     const spd = Math.max(SPEED, trk.len / 1.6);
-    spine = { trk, spd, out: active ? elbows[active] : [], tOut: trk.len / spd + GAP };
+    spine = { trk, spd, out: active && !complete ? elbows[active] : [], tOut: trk.len / spd + GAP };
     spine.cycle = spine.tOut + 0.4 + REST;
+    spine.stop = doneAt + (trk.len + TAIL) / spd;
     drawSpine();
   }
   function drawSpine() {
     if (!spine) return;
     if (reduceMQ.matches) { place(spine.trk, -1); spine.out.forEach(e => place(e, -1)); return; }
+    if (complete) { place(spine.trk, (clock - doneAt) * spine.spd); return; }
     const t = clock % spine.cycle;
     place(spine.trk, t * spine.spd);
     spine.out.forEach(e => place(e, (t - spine.tOut) * SPEED));
