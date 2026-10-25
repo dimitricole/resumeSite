@@ -340,8 +340,7 @@ g.live .head { fill: var(--ember); }
 }
 .facts dt { font: 500 12px/1.75 var(--mono); color: var(--ink-3); }
 .facts dd { min-width: 0; }
-.sg-lead .foot { padding-top: 28px; gap: 10px; }
-.btn .gh { flex: none; margin-left: -2px; }
+.sg-lead .foot { padding-top: 28px; gap: 8px 20px; font-size: 15px; }
 .phones { position: relative; min-height: 400px; }
 .phone {
   position: absolute; border-radius: 34px; border: 8px solid var(--surface); background: var(--surface); overflow: hidden;
@@ -376,7 +375,8 @@ g.live .head { fill: var(--ember); }
 .tile .foot { padding-top: 20px; }
 .badge { display: block; border-radius: 8px; }
 .badge img { height: 40px; width: auto; }
-.site-link { display: inline-flex; align-items: center; min-height: 40px; }
+.site-link { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; }
+.site-link .gh { flex: none; }
 @container (min-width: 600px) and (max-width: 859px) {
   /* one wide row per app: the story on the left, the facts and links on the right */
   .tile { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 15.5em); column-gap: 32px; align-content: start; }
@@ -390,7 +390,7 @@ g.live .head { fill: var(--ember); }
   .apps-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 0; }
   @supports (grid-template-rows: subgrid) {
     .tile { display: grid; grid-row: span 6; grid-template-rows: subgrid; row-gap: 0; align-content: start; }
-    .tile > .foot { align-self: start; }
+    .tile > .foot { align-self: start; margin-top: 0; }
   }
 }
 
@@ -579,7 +579,8 @@ g.live .head { fill: var(--ember); }
   .posts a::after, .badge::after, .sg-lead .foot a::after {
     content: " " attr(href); display: block; font: 400 8pt/1.4 var(--mono); color: var(--ink-3); word-break: break-all; text-decoration: none;
   }
-  .badge img { display: none; }
+  .badge img, .site-link .gh { display: none; }
+  .site-link { display: block; min-height: 0; }
   .badge::before { content: "App Store"; font-weight: 500; }
   .site-foot { padding: 8pt 0 0; }
   a, .textlink { text-decoration: none; }
