@@ -2,8 +2,9 @@
    Layout bands, set by viewport width:
    >= 1100px  run rail on the left, hero graph across the top
    860-1099   run bar on top, hero graph across the top
-   <= 859px   run bar on top, one spine down the page in place of the graph
-   The graph needs about 770px of width, so each band starts where it fits. */
+   <= 859px   run bar on top, a small portrait above the headline in place of the graph
+   The graph needs about 770px of width, so each band starts where it fits. At every width
+   one spine runs from the portrait down through each section, --gs left of the content. */
 
 @font-face {
   font-family: "Geist";
@@ -35,9 +36,10 @@
   --paper: #fbf7f3;
   --paper-line: #ecdfd5;
   --rail: 232px;
-  --gut: 38px;
-  --gx: 15px;
+  --gut: 38px;                        /* the content's left padding on phones */
+  --gs: 23px;                         /* how far left of the content the spine runs */
   --inset: clamp(20px, 4.4vw, 64px); /* the content column's side padding */
+  --cl: var(--inset);                 /* the content's left padding */
   --sec: clamp(64px, 7vw, 96px);      /* space after each section */
   --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -401,7 +403,8 @@ g.live .head { fill: var(--ember); }
   display: grid; grid-template-columns: 11ch minmax(0, 1fr) minmax(0, 1.6fr); gap: 24px;
   padding: 22px 0; border-bottom: 1px solid var(--line);
 }
-.job .yr { font: 500 13px/1.6 var(--mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+/* the spine's branch meets the year, so the year keeps its own height rather than the row's */
+.job .yr { align-self: start; font: 500 13px/1.6 var(--mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .job h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.35; }
 .job .role { font-size: 14.5px; color: var(--ink-2); margin-top: 2px; }
 .job p { font-size: 15px; line-height: 1.6; color: var(--ink-2); }
@@ -443,20 +446,20 @@ g.live .head { fill: var(--ember); }
     display: block; position: sticky; top: 0; z-index: 20;
     background: var(--bg); border-bottom: 1px solid var(--line);
   }
-  /* the bar lines up with the content column: its status node over the content's left edge */
+  /* the bar lines up with the content column: its status node over the spine, its label over the content */
   .bar-top {
-    display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 var(--inset) 0 calc(var(--inset) - 3px);
+    display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 var(--inset) 0 calc(var(--cl) - var(--gs) - 8px);
     font: 500 12.5px/1 var(--mono); color: var(--ink-3);
   }
   .bar-top .node, .bar-top .endnode { width: 10px; height: 10px; }
-  .bar-top [data-state] { display: flex; align-items: center; padding: 0 3px; }
+  .bar-top [data-state] { display: flex; align-items: center; justify-content: center; width: 16px; margin-right: calc(var(--gs) - 16px); }
   #barState .endnode, #barState[data-state="end"] .node { display: none; }
   #barState[data-state="end"] .endnode { display: block; }
   .bar-top .now { color: var(--ink); font-family: var(--sans); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
   .bar-top .st { color: var(--ember); }
   #barState[data-state="done"] ~ .st { color: var(--ink-3); }
   .bar-top .clock { margin-left: auto; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .bar-segs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 0 var(--inset); }
+  .bar-segs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 0 var(--inset) 0 var(--cl); }
   /* a 24px tap target around a 3px segment; the extra height overlaps the status row above */
   .bar-segs a { display: block; padding: 12px 0 9px; margin-top: -12px; border-radius: 3px; position: relative; }
   .seg { display: block; height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; }
@@ -472,25 +475,26 @@ g.live .head { fill: var(--ember); }
   .job p, .job .posts { grid-column: 2; }
 }
 
-/* ---------- Below 860: the graph becomes one spine down the page ---------- */
-.mroot, .kicker > .node, .spine { display: none; }
+/* ---------- The spine: from the portrait down through every section, ending at the run's end ---------- */
+main { position: relative; }
+.spine { position: absolute; left: 0; top: 0; width: 100%; overflow: visible; pointer-events: none; }
+.kicker { position: relative; }
+.kicker > .node, .run-end .endnode {
+  position: absolute; left: calc(-1 * var(--gs) - 6px); top: 50%; margin-top: -6px; box-shadow: 0 0 0 4px var(--bg);
+}
+.js .run-end { display: flex; align-items: center; gap: 12px; position: relative; margin-bottom: 18px; font: 500 12.5px/1.2 var(--mono); color: var(--ink); }
+.run-end .end-time { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* ---------- Below 860: a small portrait above the headline roots the spine in place of the graph ---------- */
+.mroot { display: none; }
 @media (max-width: 859px) {
-  main { position: relative; }
-  .wrap { padding-left: var(--gut); }
-  .bar-top { padding-left: calc(var(--gx) - 8px); gap: 8px; }
-  .bar-top [data-state] { width: 16px; justify-content: center; padding: 0; margin-right: calc(var(--gut) - var(--gx) - 16px); }
-  .bar-segs { padding-left: var(--gut); }
-  .js .run-end { display: flex; align-items: center; gap: 12px; position: relative; margin-bottom: 18px; font: 500 12.5px/1.2 var(--mono); color: var(--ink); }
-  .run-end .endnode { position: absolute; left: calc(var(--gx) - var(--gut) - 6px); top: 50%; margin-top: -6px; box-shadow: 0 0 0 4px var(--bg); }
-  .run-end .end-time { color: var(--ink-3); font-variant-numeric: tabular-nums; }
-  .spine { display: block; position: absolute; left: 0; top: 0; width: 100%; overflow: visible; pointer-events: none; }
+  :root { --cl: var(--gut); }
+  .wrap { padding-left: var(--cl); }
   .plan { display: none; }
   .hero { padding-bottom: 56px; }
   .who { display: flex; align-items: center; gap: 16px; margin-left: calc(16px - var(--gut)); }
   .mroot.portrait { display: block; width: 104px; margin: 0; flex: none; }
   .mroot .ring { inset: -6px; }
-  .kicker { position: relative; }
-  .kicker > .node { display: block; position: absolute; left: calc(var(--gx) - var(--gut) - 6px); top: 50%; margin-top: -6px; box-shadow: 0 0 0 4px var(--bg); }
 }
 @media (max-width: 759px) {
   .sg-lead { grid-template-columns: minmax(0, 1fr); }
@@ -532,8 +536,12 @@ g.live .head { fill: var(--ember); }
 .no-js [data-state="running"] .node::before, .no-js [data-state="running"] .node::after { content: none; }
 @media (max-width: 859px) {
   .no-js main::before {
-    content: ""; position: absolute; left: calc(var(--gx) - .5px); top: 150px; bottom: 0; width: 1px; background: var(--edge);
+    content: ""; position: absolute; left: calc(var(--gut) - var(--gs) - .5px); top: 150px; bottom: 0; width: 1px; background: var(--edge);
   }
+}
+/* the graph and its portrait need the script, so wider screens show no spine at all */
+@media (min-width: 860px) {
+  .no-js .kicker > .node { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

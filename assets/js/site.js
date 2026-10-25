@@ -1,5 +1,5 @@
 // The run: scrolling moves each section from queued to running to done. The rail, the bar,
-// the hero graph and the phone spine all paint the same states.
+// the hero graph and the spine all paint the same states.
 (() => {
   // every word the run shows, in one place
   const TEXT = {
@@ -9,7 +9,6 @@
   };
   const $ = (id) => document.getElementById(id);
   const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
-  const spineMQ = matchMedia('(max-width: 859px)'); // keep in step with site.css
   const sections = [...document.querySelectorAll('main section[data-step]')];
   const names = sections.map((s, k) => k ? s.querySelector('.kicker span:last-child').textContent : 'Start');
   const railSteps = [...document.querySelectorAll('.step')];
@@ -244,9 +243,11 @@
     e.tail.style.opacity = fade * k * 0.55;
   }
 
-  let clock = 0;
+  let clock = 0, graphVisible = true;
   function draw() {
     drawSpine();
+    // the spine keeps the loop running, so the graph's pulses rest while the graph is off screen
+    if (!graphVisible) return;
     const still = complete && clock >= gStop;
     for (const e of edges) {
       // reduced motion: one still pulse sits on each live edge
@@ -257,7 +258,7 @@
   // a complete run comes to rest once its last pulses land
   const settled = () => complete && clock >= gStop && (!spine || clock >= spine.stop);
 
-  let lastT = 0, raf = 0, graphVisible = true;
+  let lastT = 0, raf = 0;
   function frame(now) {
     const dt = lastT ? Math.min(0.05, (now - lastT) / 1000) : 0;
     lastT = now;
@@ -268,8 +269,7 @@
   function run() {
     cancelAnimationFrame(raf);
     lastT = 0;
-    const moving = edges.length ? graphVisible : !!spine;
-    if (!reduceMQ.matches && moving && !document.hidden && !settled()) raf = requestAnimationFrame(frame);
+    if (!reduceMQ.matches && spine && !document.hidden && !settled()) raf = requestAnimationFrame(frame);
     else draw();
   }
 
@@ -287,26 +287,30 @@
       n.addEventListener(ev, () => heat(n.dataset.node, on));
   });
 
-  /* ---- Phones: one spine from the portrait through every section, items branching off it ---- */
+  /* ---- The spine: one line from the portrait through every section, items branching off it ---- */
   const mainEl = document.querySelector('main');
   const spineSvg = mainEl.querySelector('.spine');
   const BRANCH = '.sg-lead, .apps-grid .tile, .job, .contact-card';
+  // the hero graph's portrait where the graph shows, the small one above the headline where it doesn't
+  const graphRoot = N('root').querySelector('.portrait');
+  const phoneRoot = document.querySelector('.mroot .photo');
   let spine = null;
 
   function buildSpine() {
     spineSvg.textContent = '';
     spine = null;
-    if (!spineMQ.matches) return;
+    const root = graphRoot.offsetWidth ? graphRoot : phoneRoot.offsetWidth ? phoneRoot : null;
+    if (!root) return;
     const M = mainEl.getBoundingClientRect();
     const rel = (el) => {
       const r = el.getBoundingClientRect();
       return { l: r.left - M.left, b: r.bottom - M.top, cx: r.left - M.left + r.width / 2, cy: r.top - M.top + r.height / 2 };
     };
-    const gx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gx')) || 15;
     const R = 10;
     spineSvg.setAttribute('height', mainEl.offsetHeight);
-    const P = rel(document.querySelector('.mroot .photo'));
-    const yN = sections.map((sec, k) => k ? rel(sec.querySelector('.kicker > .node')).cy : 0);
+    const P = rel(root);
+    const marks = sections.map((sec, k) => k ? rel(sec.querySelector('.kicker > .node')) : null);
+    const gx = marks[1].cx, yN = marks.map(m => m ? m.cy : 0);
     // only the first item in each row branches off the spine, so no elbow crosses a neighbour
     const items = sections.map(sec => [...sec.querySelectorAll(BRANCH)]
       .filter((el, _, all) => !all.some(o => o !== el && Math.abs(o.offsetTop - el.offsetTop) < 2 && rel(o).l < rel(el).l))
@@ -314,7 +318,10 @@
     // the trunk ends at the run's end node in the footer
     const yEnd = rel(document.querySelector('.run-end .endnode')).cy - 9;
     const ye = P.b + 12;
-    const head0 = `M${P.cx},${P.b} V${ye - R} Q${P.cx},${ye} ${P.cx - R},${ye} H${gx + R} Q${gx},${ye} ${gx},${ye + R}`;
+    // the graph's edges leave its portrait's ring on the right, so the spine leaves it on the left
+    const head0 = root === graphRoot
+      ? `M${P.l - 10},${P.cy} H${gx + R} Q${gx},${P.cy} ${gx},${P.cy + R}`
+      : `M${P.cx},${P.b} V${ye - R} Q${P.cx},${ye} ${P.cx - R},${ye} H${gx + R} Q${gx},${ye} ${gx},${ye + R}`;
     // trunk segments: segment k leads into section k + 1; the last one runs through Contact to the end
     for (let k = 0; k <= last; k++) {
       const d = k === 0 ? head0 + ` V${yN[1]}` : `M${gx},${yN[k]} V${k === last ? yEnd : yN[k + 1]}`;
@@ -377,9 +384,9 @@
   addEventListener('resize', () => { layoutRail(); measure(); });
   document.addEventListener('visibilitychange', () => { tPrev = performance.now(); run(); });
   new ResizeObserver(() => { build(); run(); }).observe(graph);
-  new ResizeObserver(() => buildSpine()).observe(mainEl);
-  new IntersectionObserver(([e]) => { graphVisible = e.isIntersecting; run(); }).observe(graph);
-  spineMQ.addEventListener('change', () => { buildSpine(); run(); });
+  new ResizeObserver(() => { buildSpine(); run(); }).observe(mainEl);
+  // a batch can hold more than one crossing; the newest is the one that holds
+  new IntersectionObserver((es) => { graphVisible = es[es.length - 1].isIntersecting; run(); }).observe(graph);
   reduceMQ.addEventListener('change', () => { paintEdges(); run(); });
 
   const relayout = () => { layoutRail(); measure(); build(); buildSpine(); run(); };
