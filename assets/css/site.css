@@ -210,6 +210,8 @@ section, [id] { scroll-margin-top: 24px; }
 }
 .intro { font-size: 17px; line-height: 1.6; color: var(--ink-2); max-width: 32em; }
 .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.open { display: flex; align-items: flex-start; gap: 10px; margin-top: 22px; font: 500 12.5px/1.45 var(--mono); color: var(--ink-2); text-wrap: pretty; }
+.open i { width: 7px; height: 7px; margin-top: 5.5px; border-radius: 50%; flex: none; background: var(--ember); box-shadow: 0 0 0 3px rgba(168, 64, 12, .14); }
 
 /* the plan: a node graph whose nodes are the run's steps */
 .plan { margin-top: clamp(36px, 5.5vh, 56px); }
@@ -377,6 +379,8 @@ g.live .head { fill: var(--ember); }
 .tile .foot { padding-top: 20px; }
 .badge { display: block; border-radius: 8px; }
 .badge img { height: 40px; width: auto; }
+/* Google's badge carries 41px of clear space around its 564x168 art, so the art matches the App Store badge's 40px */
+.badge.play img { height: calc(40px * 250 / 168); max-width: none; margin: calc(-40px * 41 / 168); pointer-events: none; }
 .site-link { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; }
 .site-link .gh { flex: none; }
 @container (min-width: 600px) and (max-width: 859px) {
@@ -574,6 +578,10 @@ main { position: relative; }
   .ghost img { width: 30px; height: 30px; }
   .sg-lead { display: block; margin-top: 12pt; padding: 12pt; border-radius: 10px; }
   .sg-lead .copy { padding: 0; }
+  /* the phones stay off paper, so the links take their column beside the story and facts */
+  .sg-lead .copy { display: grid; grid-template-columns: minmax(0, 1fr) 15em; column-gap: 16pt; }
+  .sg-lead .copy > * { grid-column: 1; }
+  .sg-lead .foot { grid-column: 2; grid-row: 4 / span 2; flex-direction: column; align-items: flex-start; gap: 6pt; margin: 10pt 0 0; padding: 0; }
   .facts { display: block; }
   /* print sets its own three columns, so the screen's container queries stay out of it */
   .sg .wrap { container-type: normal; }
@@ -592,12 +600,14 @@ main { position: relative; }
   .contact-links .btn { min-height: 0; padding: 4pt 0; border: 0; justify-content: flex-start; gap: 12pt; }
   .btn { height: auto; padding: 0; border: 0; background: none; }
   .chip { background: none !important; }
+  .chip.live i, .open i { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .posts a::after, .badge::after, .sg-lead .foot a::after {
     content: " " attr(href); display: block; font: 400 8pt/1.4 var(--mono); color: var(--ink-3); word-break: break-all; text-decoration: none;
   }
   .badge img, .site-link .gh { display: none; }
   .site-link { display: block; min-height: 0; }
   .badge::before { content: "App Store"; font-weight: 500; }
+  .badge.play::before { content: "Google Play"; }
   .site-foot { padding: 8pt 0 0; }
   a, .textlink { text-decoration: none; }
 }

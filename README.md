@@ -1,6 +1,6 @@
 # dimitricole.com
 
-The personal site of Dimitri Cole Restaino, solutions architect for AI and cloud. It is a single static page (`index.html`, `assets/css/site.css`, `assets/js/site.js`) with self-hosted Geist fonts, no build step and no dependencies.
+The personal site of Dimitri Cole Restaino, applied AI and solutions architect. It is a single static page (`index.html`, `assets/css/site.css`, `assets/js/site.js`) with self-hosted Geist fonts, no build step and no dependencies.
 
 ## Preview locally
 

@@ -1,8 +1,8 @@
 # Dimitri Cole Restaino
 
-> Solutions architect for AI and cloud who runs Snowy Ghost, his own app company in New York, and is open to applied AI and solutions architecture roles.
+> Applied AI and solutions architect who runs Snowy Ghost, his own app company in New York, and is open to applied AI and solutions architecture roles.
 
-Dimitri designs AI systems and builds apps. At Snowy Ghost he makes Ovenlight, Glitch, Dimm and Whengo. His career is in solutions architecture: five years at AWS, then leading a team of solutions architects at Ripple, designing AI and cloud systems with banks, healthcare companies and other enterprises.
+Dimitri designs AI systems and builds apps. At Snowy Ghost he makes Ovenlight, Glitch, Dimm and Whengo. Ovenlight is an open-source platform where coding agents build web apps and publish them to people's phones. His career is in solutions architecture: five years at AWS, then leading a team of solutions architects at Ripple, designing AI and cloud systems with banks, healthcare companies and other enterprises.
 
 Ripple, Customer Solutions Director, New York, 2025-2026: led the North America customer solutions team of pre-sales solutions architects as a player-coach, advised 20+ banks, designed an AI workflow for answering RFPs, and as an org AI lead for sales ran AI training for 20+ reps.
 
@@ -19,8 +19,9 @@ Travelers, Tech Lead / Developer, Hartford, 2016-2020: led seven developers plus
 ## Snowy Ghost
 
 - [Snowy Ghost](https://snowyghost.com/): his company, which designs, builds and runs its apps from New York
-- [Ovenlight](https://ovenlight.app/): opens your own web apps, built by you or your coding agent, on your iPhone behind Face ID, served from your own computer and shared only with the people you invite. Its connector is also an MCP server, so a coding agent can publish an app, check it and read its logs.
-- [Ovenlight on the App Store](https://apps.apple.com/app/id6817561066): free for iPhone
+- [Ovenlight](https://ovenlight.app/): opens your own web apps, built by you or your coding agent, on your iPhone or Android phone behind Face ID or your fingerprint, served from your own computer and shared only with the people you invite. Its connector is also an MCP server, so a coding agent can publish an app, check it and read its logs.
+- [Ovenlight on the App Store](https://apps.apple.com/app/id6817561066): for iPhone
+- [Ovenlight on Google Play](https://play.google.com/store/apps/details?id=com.snowyghost.ovenlight): for Android
 - [Ovenlight on GitHub](https://github.com/snowy-ghost/ovenlight): source code for the iPhone app, the Android app and the connector, under the Apache License 2.0, with setup and security docs
 - [Glitch on the App Store](https://apps.apple.com/app/id6708241037): a party game of humans and hidden robots for 3 to 12 players, each on their own iPhone or iPad. Joining is free.
 - [Dimm on the App Store](https://apps.apple.com/app/id6759893856): Home Screen widgets that list your apps by name instead of icons, with layouts that can switch on a schedule or follow a Focus
